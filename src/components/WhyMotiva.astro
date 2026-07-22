@@ -1,0 +1,44 @@
+---
+/* =============================================================
+   WhyMotiva — “Why Motiva?” value-props grid.
+   Short benefit blocks (icon + title + one sentence) that build
+   trust and answer “why choose us”. Bilingual data from content.ts.
+   ============================================================= */
+import SectionHeader from "./SectionHeader.astro"
+import { getLangFromUrl, useTranslations } from "@i18n/utils"
+import { valueProps } from "@data/content"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+---
+
+<section class="section relative" id="why">
+  <div class="container-x">
+    <SectionHeader
+      eyebrow={t("why.title")}
+      title={t("why.title")}
+      subtitle={t("why.subtitle")}
+    />
+
+    <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        valueProps.map((v, i) => (
+          <article
+            class="card card-hover reveal group flex items-start gap-4 p-6"
+            data-reveal-delay={i * 0.06}
+          >
+            <span class="grid h-12 w-12 flex-none place-items-center rounded-2xl bg-brand-gradient-soft text-brand-pink transition group-hover:scale-110">
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d={v.icon} />
+              </svg>
+            </span>
+            <div>
+              <h3 class="text-lg font-bold">{v.title[lang]}</h3>
+              <p class="mt-1 text-sm leading-6 text-fg-muted">{v.description[lang]}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

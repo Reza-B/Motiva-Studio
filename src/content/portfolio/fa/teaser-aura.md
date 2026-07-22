@@ -1,5 +1,6 @@
 ---
 title: "تیزر آئورا"
+description: "تیزر محصول آئورا؛ چند ثانیه تصویر سینمایی که میل به خرید را روشن می‌کند."
 client: "آئورا"
 category: "teaser"
 thumbnail: "../../../assets/portfolio/p2.jpg"

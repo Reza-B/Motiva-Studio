@@ -1,5 +1,6 @@
 ---
 title: "تیزر اوربیت"
+description: "تیزر رونمایی اوربیت؛ ریتم تند و نورپردازی درجه‌یک برای یک لانچ به‌یادماندنی."
 client: "اوربیت"
 category: "teaser"
 thumbnail: "../../../assets/portfolio/p6.jpg"

@@ -1,5 +1,6 @@
 ---
 title: "Pulse Motion"
+description: "Pulse motion graphics — a complex service explained simply, fast, and beautifully."
 client: "Pulse"
 category: "motion"
 thumbnail: "../../../assets/portfolio/p3.jpg"

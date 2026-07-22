@@ -5,6 +5,6 @@ import { getLangFromUrl, useTranslations } from "@i18n/utils"
 const t = useTranslations(getLangFromUrl(Astro.url))
 ---
 
-<BaseLayout title={`${t("services.title")} — ${t("site.name")}`} description={t("services.subtitle")}>
+<BaseLayout title={t("seo.services.title")} description={t("seo.services.desc")} keywords={t("seo.services.keywords")}>
   <ServicesContent />
 </BaseLayout>

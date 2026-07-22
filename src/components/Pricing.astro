@@ -2,6 +2,7 @@
 /* =============================================================
    Pricing — Basic / Pro / Premium cards. The "popular" plan is
    highlighted with the brand gradient border + badge.
+   Prices are placeholders (“قیمت بر اساس پروژه”) — quotes are custom.
    ============================================================= */
 import SectionHeader from "./SectionHeader.astro"
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
@@ -25,20 +26,20 @@ const tp = useTranslatedPath(lang)
         pricing.map((plan, i) => (
           <article
             class:list={[
-              "reveal relative flex flex-col rounded-3xl border p-8 transition-all duration-300",
+              "card reveal relative flex flex-col p-8",
               plan.popular
-                ? "border-transparent bg-surface shadow-glow lg:-translate-y-4"
-                : "border-border bg-surface hover:-translate-y-1 hover:border-brand-pink/50",
+                ? "border-transparent shadow-glow lg:-translate-y-4"
+                : "card-hover",
             ]}
             data-reveal-delay={i * 0.08}
           >
             {plan.popular && (
               <>
                 <span
-                  class="pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-brand-gradient p-px"
+                  class="pointer-events-none absolute inset-0 -z-10 rounded-[1.75rem] bg-brand-gradient p-px"
                   aria-hidden="true"
                 >
-                  <span class="block h-full w-full rounded-3xl bg-surface" />
+                  <span class="block h-full w-full rounded-[1.7rem] bg-surface" />
                 </span>
                 <span class="absolute -top-3 start-1/2 -translate-x-1/2 rounded-full bg-brand-gradient px-4 py-1 text-xs font-bold text-white shadow-glow">
                   {t("pricing.popular")}
@@ -46,9 +47,11 @@ const tp = useTranslatedPath(lang)
               </>
             )}
 
-            <h3 class="text-lg font-bold text-fg-muted">{plan.name[lang]}</h3>
-            <div class="mt-3 flex items-baseline gap-1">
-              <span class="text-3xl font-extrabold text-gradient">
+            <h3 class="text-xl font-extrabold">{plan.name[lang]}</h3>
+            <p class="mt-1 text-sm text-fg-muted">{plan.tagline[lang]}</p>
+
+            <div class="mt-5 flex items-baseline gap-1">
+              <span class="text-2xl font-extrabold text-gradient">
                 {plan.price[lang]}
               </span>
             </div>
@@ -77,5 +80,10 @@ const tp = useTranslatedPath(lang)
         ))
       }
     </div>
+
+    {/* Custom-quote note */}
+    <p class="reveal mx-auto mt-8 max-w-2xl text-center text-sm text-fg-muted">
+      {t("pricing.note")}
+    </p>
   </div>
 </section>

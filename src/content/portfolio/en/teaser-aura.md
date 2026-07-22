@@ -1,5 +1,6 @@
 ---
 title: "Aura Teaser"
+description: "Aura product teaser — a few cinematic seconds that spark the urge to buy."
 client: "Aura"
 category: "teaser"
 thumbnail: "../../../assets/portfolio/p2.jpg"

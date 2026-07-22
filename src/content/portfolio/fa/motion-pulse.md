@@ -1,5 +1,6 @@
 ---
 title: "موشن پالس"
+description: "موشن گرافیک پالس؛ توضیح یک سرویس پیچیده در قالبی ساده، سریع و جذاب."
 client: "پالس"
 category: "motion"
 thumbnail: "../../../assets/portfolio/p3.jpg"

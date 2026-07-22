@@ -1,5 +1,6 @@
 ---
 title: "Vertex Brand Film"
+description: "Vertex brand film — a cinematic story of identity, values, and vision."
 client: "Vertex"
 category: "brand"
 thumbnail: "../../../assets/portfolio/p4.jpg"

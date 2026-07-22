@@ -1,7 +1,9 @@
 /* =============================================================
    PortfolioGallery — React island for the filterable video grid
    with hover-to-play previews and a lightbox.
-   - Framer Motion powers the layout/filter + lightbox transitions.
+   - Pinterest-style masonry layout (CSS columns) with varied
+     card heights for a lively, image-forward feel.
+   - Framer Motion powers the filter fade + lightbox transitions.
    - Hover plays a muted preview clip; leaving pauses & resets.
    - Click opens an accessible lightbox (Esc / backdrop to close).
    Data is passed in from Astro (already localized).
@@ -27,14 +29,26 @@ interface Props {
   viewLabel: string
 }
 
+/* Varied aspect ratios cycled by index to create the masonry rhythm. */
+const ASPECTS = [
+  "aspect-[4/5]",
+  "aspect-square",
+  "aspect-[3/4]",
+  "aspect-video",
+  "aspect-[4/5]",
+  "aspect-[3/4]",
+]
+
 function VideoCard({
   item,
   onOpen,
   viewLabel,
+  aspect,
 }: {
   item: PortfolioItem
   onOpen: () => void
   viewLabel: string
+  aspect: string
 }) {
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -52,7 +66,6 @@ function VideoCard({
 
   return (
     <motion.button
-      layout
       type="button"
       onClick={onOpen}
       onMouseEnter={play}
@@ -63,7 +76,10 @@ function VideoCard({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.3 }}
-      className="group relative aspect-video w-full overflow-hidden rounded-3xl border border-border bg-surface text-start"
+      className={
+        "masonry-item group relative mb-5 block w-full overflow-hidden rounded-3xl border border-border bg-surface text-start shadow-soft transition-shadow duration-300 hover:shadow-glow " +
+        aspect
+      }
       aria-label={`${viewLabel}: ${item.title}`}
     >
       <img
@@ -200,19 +216,20 @@ export default function PortfolioGallery({ items, filters, viewLabel }: Props) {
         ))}
       </div>
 
-      {/* Grid */}
-      <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Masonry (CSS columns) */}
+      <div className="masonry columns-1 sm:columns-2 lg:columns-3">
         <AnimatePresence mode="popLayout">
-          {visible.map((item) => (
+          {visible.map((item, i) => (
             <VideoCard
               key={item.slug}
               item={item}
+              aspect={ASPECTS[i % ASPECTS.length]}
               viewLabel={viewLabel}
               onOpen={() => setSelected(item)}
             />
           ))}
         </AnimatePresence>
-      </motion.div>
+      </div>
 
       <AnimatePresence>
         {selected && (

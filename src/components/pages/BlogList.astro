@@ -41,13 +41,13 @@ const dateFmt = new Intl.DateTimeFormat(lang === "fa" ? "fa-IR" : "en-US", {
       )
     }
 
-    <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <div class="masonry mt-12 columns-1 sm:columns-2 lg:columns-3">
       {
         posts.map((post, i) => {
           const { slug } = splitEntryId(post.id)
           return (
             <article
-              class="reveal group flex flex-col overflow-hidden rounded-3xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-brand-pink/50 hover:shadow-glow"
+              class="masonry-item reveal card card-hover group mb-5 flex flex-col overflow-hidden"
               data-reveal-delay={i * 0.06}
             >
               <a href={tp(`/blog/${slug}`)} class="block">

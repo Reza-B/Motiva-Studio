@@ -4,73 +4,134 @@
    title, description, canonical, Open Graph, Twitter cards,
    hreflang alternates, and JSON-LD structured data.
    ============================================================= */
-import { getAlternateLinks, type Lang } from "@i18n/utils"
-import { SITE_URL } from "@data/site"
+import { getAlternateLinks, type Lang } from "@i18n/utils";
+import { SITE_URL } from "@data/site";
 
 interface Props {
-  title: string
-  description: string
-  lang: Lang
-  /** Absolute or site-relative OG image. */
-  image?: string
-  /** "website" | "article" */
-  type?: "website" | "article"
-  /** Extra JSON-LD objects to inject (Article, BreadcrumbList, etc.). */
-  jsonLd?: Record<string, unknown>[]
-  noindex?: boolean
+	title: string;
+	description: string;
+	/** Comma-separated target keywords (bilingual). */
+	keywords?: string;
+	lang: Lang;
+	/** Absolute or site-relative OG image. */
+	image?: string;
+	/** "website" | "article" */
+	type?: "website" | "article";
+	/** Extra JSON-LD objects to inject (Article, BreadcrumbList, etc.). */
+	jsonLd?: Record<string, unknown>[];
+	noindex?: boolean;
 }
 
 const {
-  title,
-  description,
-  lang,
-  image = "/og-default.jpg",
-  type = "website",
-  jsonLd = [],
-  noindex = false,
-} = Astro.props
+	title,
+	description,
+	keywords,
+	lang,
+	image = "/og-default.jpg",
+	type = "website",
+	jsonLd = [],
+	noindex = false,
+} = Astro.props;
 
-const site = SITE_URL.replace(/\/$/, "")
-const pathname = Astro.url.pathname
-const canonical = site + pathname
-const ogImage = image.startsWith("http") ? image : site + image
-const alternates = getAlternateLinks(pathname, site)
-const siteName = lang === "fa" ? "استودیو موتیوا" : "Motiva Studio"
+const site = SITE_URL.replace(/\/$/, "");
+const pathname = Astro.url.pathname;
+const canonical = site + pathname;
+const ogImage = image.startsWith("http") ? image : site + image;
+const alternates = getAlternateLinks(pathname, site);
+const siteName = lang === "fa" ? "استودیو موتیوا" : "Motiva Studio";
 ---
 
 <title>{title}</title>
-<meta name="description" content={description} />
-<link rel="canonical" href={canonical} />
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+<meta
+	name="description"
+	content={description}
+/>
+{
+	keywords && (
+		<meta
+			name="keywords"
+			content={keywords}
+		/>
+	)
+}
+<link
+	rel="canonical"
+	href={canonical}
+/>
+{
+	noindex && (
+		<meta
+			name="robots"
+			content="noindex, nofollow"
+		/>
+	)
+}
 
 {/* hreflang alternates for bilingual SEO */}
 {
-  alternates.map((alt) => (
-    <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
-  ))
+	alternates.map((alt) => (
+		<link
+			rel="alternate"
+			hreflang={alt.hreflang}
+			href={alt.href}
+		/>
+	))
 }
 
 {/* Open Graph */}
-<meta property="og:type" content={type} />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-<meta property="og:url" content={canonical} />
-<meta property="og:image" content={ogImage} />
-<meta property="og:locale" content={lang === "fa" ? "fa_IR" : "en_US"} />
-<meta property="og:site_name" content={siteName} />
+<meta
+	property="og:type"
+	content={type}
+/>
+<meta
+	property="og:title"
+	content={title}
+/>
+<meta
+	property="og:description"
+	content={description}
+/>
+<meta
+	property="og:url"
+	content={canonical}
+/>
+<meta
+	property="og:image"
+	content={ogImage}
+/>
+<meta
+	property="og:locale"
+	content={lang === "fa" ? "fa_IR" : "en_US"}
+/>
+<meta
+	property="og:site_name"
+	content={siteName}
+/>
 
 {/* Twitter cards */}
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={title} />
-<meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={ogImage} />
+<meta
+	name="twitter:card"
+	content="summary_large_image"
+/>
+<meta
+	name="twitter:title"
+	content={title}
+/>
+<meta
+	name="twitter:description"
+	content={description}
+/>
+<meta
+	name="twitter:image"
+	content={ogImage}
+/>
 
 {/* JSON-LD structured data */}
 {
-  jsonLd.map((obj) => (
-    <script
-      type="application/ld+json"
-      set:html={JSON.stringify(obj)}
-    />
-  ))
+	jsonLd.map((obj) => (
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify(obj)}
+		/>
+	))
 }

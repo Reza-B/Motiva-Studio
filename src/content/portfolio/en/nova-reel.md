@@ -1,5 +1,6 @@
 ---
 title: "Nova Campaign"
+description: "Nova's Instagram video campaign — a Reels series that grew followers and sales together."
 client: "Nova Brand"
 category: "social"
 thumbnail: "../../../assets/portfolio/p1.jpg"

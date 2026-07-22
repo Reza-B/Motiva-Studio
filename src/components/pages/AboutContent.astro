@@ -1,52 +1,71 @@
 ---
-/* About page body. */
-import GradientBlobs from "@components/GradientBlobs.astro"
-import StatsCounter from "@components/StatsCounter.astro"
-import ProcessTimeline from "@components/ProcessTimeline.astro"
-import CTA from "@components/CTA.astro"
-import { getLangFromUrl } from "@i18n/utils"
+/* About page body — brand story + mission statement. */
+import GradientBlobs from "@components/GradientBlobs.astro";
+import StatsCounter from "@components/StatsCounter.astro";
+import ProcessTimeline from "@components/ProcessTimeline.astro";
+import CTA from "@components/CTA.astro";
+import { getLangFromUrl } from "@i18n/utils";
 
-const lang = getLangFromUrl(Astro.url)
+const lang = getLangFromUrl(Astro.url);
 
 const copy = {
-  fa: {
-    eyebrow: "درباره ما",
-    title: "ما داستان‌ها را به حرکت درمی‌آوریم",
-    lead: "استودیو موتیوا یک استودیوی خلاق تولید ویدیوی تبلیغاتی است که به برندها کمک می‌کند دیده شوند، به یاد بمانند و بفروشند.",
-    body: [
-      "ما ترکیبی از کارگردانان، انیمیشن‌سازان و استراتژیست‌های برند هستیم که با عشق به تصویر کار می‌کنیم.",
-      "از اولین جلسه ایده‌پردازی تا تحویل نهایی، کنار شما هستیم تا پیام برندتان دقیقاً همان‌طور که می‌خواهید روایت شود.",
-    ],
-  },
-  en: {
-    eyebrow: "About us",
-    title: "We bring stories to motion",
-    lead: "Motiva Studio is a creative advertising-video studio that helps brands get seen, be remembered, and sell.",
-    body: [
-      "We are a blend of directors, animators, and brand strategists who work with a genuine love for the image.",
-      "From the first ideation session to final delivery, we stay by your side so your brand message is told exactly the way you want.",
-    ],
-  },
-}[lang]
+	fa: {
+		eyebrow: "درباره ما",
+		title: "ما داستان‌ها را به حرکت درمی‌آوریم",
+		lead: "استودیو موتیوا یک استودیوی خلاق ساخت ویدیوی تبلیغاتی است؛ جایی که ایده‌ها به تصویرهایی تبدیل می‌شوند که دیده می‌شوند، به یاد می‌مانند و می‌فروشند.",
+		body: [
+			"موتیوا از دل یک باور ساده متولد شد: هر برند، چه کوچک و چه بزرگ، یک داستان ارزشمند برای گفتن دارد. ما تیمی از کارگردان‌ها، انیمیشن‌سازان و استراتژیست‌های برند هستیم که عاشق تصویریم و می‌دانیم چطور توجه مخاطب را در ثانیه‌ی اول به دست بیاوریم.",
+			"در این سال‌ها کنار کافه‌ها، فروشگاه‌های آنلاین، کلینیک‌ها و آژانس‌های املاک ایستاده‌ایم و دیده‌ایم که یک ویدیوی درست چطور می‌تواند مسیر یک کسب‌وکار را عوض کند. برای همین تمرکزمان فقط روی زیبایی نیست؛ روی نتیجه است.",
+			"از اولین جلسه‌ی ایده‌پردازی تا تحویل نهایی، کنار شما هستیم تا پیام برندتان دقیقاً همان‌طور که می‌خواهید روایت شود — حرفه‌ای، به‌موقع و بدون دردسر.",
+		],
+		missionLabel: "ماموریت ما",
+		mission:
+			"کمک به کسب‌وکارها برای رشد، با ویدیوهایی که می‌فروشند و ماندگار می‌شوند.",
+	},
+	en: {
+		eyebrow: "About us",
+		title: "We bring stories to motion",
+		lead: "Motiva Studio is a creative advertising-video studio — where ideas become visuals that get seen, remembered, and sell.",
+		body: [
+			"Motiva was born from a simple belief: every brand, big or small, has a story worth telling. We're a team of directors, animators, and brand strategists who love the craft of the image and know how to earn attention in the first second.",
+			"Over the years we've stood beside cafes, online shops, clinics, and real-estate agencies — and we've seen how the right video can change the trajectory of a business. That's why we don't just chase beauty; we chase results.",
+			"From the first ideation session to final delivery, we stay by your side so your brand message is told exactly the way you want it — professional, on time, and stress-free.",
+		],
+		missionLabel: "Our mission",
+		mission:
+			"To help businesses grow with videos that sell and stay memorable.",
+	},
+}[lang];
 ---
 
 <section class="section relative overflow-hidden">
-  <GradientBlobs />
-  <div class="container-x">
-    <div class="reveal max-w-3xl">
-      <span class="eyebrow mb-4">
-        <span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
-        {copy.eyebrow}
-      </span>
-      <h1 class="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-        {copy.title}
-      </h1>
-      <p class="mt-6 text-xl text-fg-muted">{copy.lead}</p>
-      <div class="mt-6 space-y-4 text-lg text-fg-muted">
-        {copy.body.map((p) => <p>{p}</p>)}
-      </div>
-    </div>
-  </div>
+	<GradientBlobs />
+	<div class="container-x">
+		<div class="reveal max-w-3xl">
+			<span class="eyebrow mb-4">
+				<span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
+				{copy.eyebrow}
+			</span>
+			<h1
+				class="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
+			>
+				{copy.title}
+			</h1>
+			<p class="mt-6 text-xl text-fg-muted">{copy.lead}</p>
+			<div class="mt-6 space-y-4 text-lg leading-8 text-fg-muted">
+				{copy.body.map((p) => <p>{p}</p>)}
+			</div>
+		</div>
+
+		{/* Mission statement */}
+		<div class="reveal card mt-12 max-w-3xl p-8">
+			<span class="eyebrow mb-3">
+				<span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
+				{copy.missionLabel}
+			</span>
+			<p class="text-2xl font-bold leading-snug">{copy.mission}</p>
+		</div>
+	</div>
 </section>
 
 <StatsCounter />

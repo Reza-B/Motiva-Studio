@@ -1,5 +1,6 @@
 ---
 title: "Orbit Teaser"
+description: "Orbit launch teaser — punchy rhythm and premium lighting for a memorable launch."
 client: "Orbit"
 category: "teaser"
 thumbnail: "../../../assets/portfolio/p6.jpg"

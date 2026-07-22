@@ -2,6 +2,11 @@
    Motiva Studio — global styles & design tokens
    Tailwind layers + CSS variables that drive the light/dark theme
    and per-locale typography (Vazirmatn for fa, Inter for en).
+
+   Palette v2 — a warm, editorial “Pinterest” mood: cream canvas,
+   floating white cards, soft shadows, generous rounding, and
+   masonry galleries. The orange→pink brand gradient stays as the
+   single energetic accent.
    ============================================================= */
 
 /* Self-hosted variable fonts (no external requests → great CWV). */
@@ -14,16 +19,21 @@
 
 @layer base {
   /* ---- Light theme (default) ----
-     Soft, warm off-white palette (not pure #fff) to avoid glare.
-     `bg` is the page canvas; `surface` cards sit slightly brighter
-     on top for depth. */
+     Warm cream canvas (not pure #fff) for an airy, gallery feel.
+     `surface` cards are pure white so they float above the cream. */
   :root {
-    --bg: 244 243 248;
-    --bg-soft: 236 235 242;
-    --surface: 253 252 255;
-    --fg: 26 26 32;
-    --fg-muted: 94 96 110;
-    --border: 223 222 232;
+    --bg: 248 245 240;        /* #F8F5F0 warm cream */
+    --bg-soft: 241 236 228;   /* #F1ECE4 */
+    --surface: 255 255 255;   /* #FFFFFF floating cards */
+    --fg: 34 29 25;           /* #221D19 warm near-black */
+    --fg-muted: 122 112 103;  /* #7A7067 */
+    --border: 233 226 216;    /* #E9E2D8 */
+
+    /* Elevation tuned for the light, warm canvas. */
+    --shadow-card: 0 1px 2px rgba(31, 23, 15, 0.05),
+      0 12px 32px -16px rgba(31, 23, 15, 0.18);
+    --shadow-card-hover: 0 2px 6px rgba(31, 23, 15, 0.06),
+      0 24px 48px -20px rgba(216, 30, 119, 0.28);
 
     /* Persian is primary → Vazirmatn is the default UI font. */
     --font-sans: "Vazirmatn Variable", "Vazirmatn", system-ui, sans-serif;
@@ -31,14 +41,21 @@
     color-scheme: light;
   }
 
-  /* ---- Dark theme ---- */
+  /* ---- Dark theme ----
+     Warm charcoal (not pure black) so the brand gradient glows
+     without harsh contrast. */
   .dark {
-    --bg: 10 10 14;
-    --bg-soft: 16 16 22;
-    --surface: 20 20 28;
-    --fg: 244 244 248;
-    --fg-muted: 165 167 182;
-    --border: 38 38 48;
+    --bg: 22 19 16;           /* #161310 warm charcoal */
+    --bg-soft: 28 24 20;      /* #1C1814 */
+    --surface: 33 29 24;      /* #211D18 */
+    --fg: 247 243 238;        /* #F7F3EE */
+    --fg-muted: 176 167 157;  /* #B0A79D */
+    --border: 52 46 39;       /* #342E27 */
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4),
+      0 16px 40px -18px rgba(0, 0, 0, 0.7);
+    --shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.45),
+      0 28px 56px -20px rgba(216, 30, 119, 0.4);
 
     color-scheme: dark;
   }
@@ -108,18 +125,27 @@
   /* Secondary / ghost button. */
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-full border border-border
-      bg-surface/60 px-7 py-3 font-semibold text-fg backdrop-blur transition-all duration-300
-      hover:border-brand-pink hover:text-brand-pink;
+      bg-surface/70 px-7 py-3 font-semibold text-fg backdrop-blur transition-all duration-300
+      hover:-translate-y-0.5 hover:border-brand-pink hover:text-brand-pink;
   }
 
-  /* Glassmorphism card. */
+  /* Floating card surface — the core Pinterest-style building block. */
+  .card {
+    @apply rounded-[1.75rem] border border-border bg-surface;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.3s ease, box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: rgb(var(--border));
+  }
+
+  /* Glassmorphism card (theme-aware tint). */
   .glass {
-    @apply rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl;
-    background-image: linear-gradient(
-      135deg,
-      rgb(255 255 255 / 0.08),
-      rgb(255 255 255 / 0.02)
-    );
+    @apply rounded-[1.75rem] border border-border bg-surface/70 backdrop-blur-xl;
+    box-shadow: var(--shadow-card);
   }
 
   .container-x {
@@ -131,8 +157,8 @@
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full border border-border bg-bg-soft
-      px-4 py-1.5 text-sm font-medium text-fg-muted;
+    @apply inline-flex items-center gap-2 rounded-full border border-border bg-surface/80
+      px-4 py-1.5 text-sm font-medium text-fg-muted backdrop-blur;
   }
 
   /* Utility used by the scroll-reveal helper (see lib/animations.ts). */
@@ -149,6 +175,17 @@
 }
 
 @layer utilities {
+  /* Pinterest-style masonry: balanced CSS columns with cards that
+     never break across a column boundary. Pair with `mb-*` on items. */
+  .masonry {
+    column-gap: 1.25rem;
+    column-fill: balance;
+  }
+  .masonry-item {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+  }
+
   /* Subtle film-grain overlay (used on hero / CTA). */
   .grain::after {
     content: "";

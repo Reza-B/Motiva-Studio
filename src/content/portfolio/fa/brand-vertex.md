@@ -1,5 +1,6 @@
 ---
 title: "ویدیوی برند ورتکس"
+description: "فیلم برند ورتکس؛ روایتی سینمایی از هویت، ارزش‌ها و داستان برند."
 client: "ورتکس"
 category: "brand"
 thumbnail: "../../../assets/portfolio/p4.jpg"

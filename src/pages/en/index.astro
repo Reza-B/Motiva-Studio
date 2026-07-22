@@ -9,8 +9,9 @@ const t = useTranslations(lang)
 ---
 
 <BaseLayout
-  title={`${t("site.name")} — ${t("site.tagline")}`}
-  description={t("site.description")}
+  title={t("seo.home.title")}
+  description={t("seo.home.desc")}
+  keywords={t("seo.home.keywords")}
 >
   <HomeSections />
 </BaseLayout>

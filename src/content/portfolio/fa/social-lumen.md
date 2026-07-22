@@ -1,5 +1,6 @@
 ---
 title: "محتوای لومن"
+description: "کمپین ریلز برای برند لومن؛ محتوای کوتاه و اسکرول‌ایستی که تعامل را چند برابر کرد."
 client: "لومن"
 category: "social"
 thumbnail: "../../../assets/portfolio/p5.jpg"

@@ -2,6 +2,7 @@
 /* Services page body — full service list + process + pricing. */
 import GradientBlobs from "@components/GradientBlobs.astro"
 import ServicesOverview from "@components/ServicesOverview.astro"
+import WhyMotiva from "@components/WhyMotiva.astro"
 import ProcessTimeline from "@components/ProcessTimeline.astro"
 import Pricing from "@components/Pricing.astro"
 import CTA from "@components/CTA.astro"
@@ -28,6 +29,7 @@ const t = useTranslations(lang)
 </section>
 
 <ServicesOverview showHeader={false} />
+<WhyMotiva />
 <ProcessTimeline />
 <Pricing />
 <CTA />
