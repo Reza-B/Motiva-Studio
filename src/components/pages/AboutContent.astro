@@ -1,0 +1,54 @@
+---
+/* About page body. */
+import GradientBlobs from "@components/GradientBlobs.astro"
+import StatsCounter from "@components/StatsCounter.astro"
+import ProcessTimeline from "@components/ProcessTimeline.astro"
+import CTA from "@components/CTA.astro"
+import { getLangFromUrl } from "@i18n/utils"
+
+const lang = getLangFromUrl(Astro.url)
+
+const copy = {
+  fa: {
+    eyebrow: "درباره ما",
+    title: "ما داستان‌ها را به حرکت درمی‌آوریم",
+    lead: "استودیو موتیوا یک استودیوی خلاق تولید ویدیوی تبلیغاتی است که به برندها کمک می‌کند دیده شوند، به یاد بمانند و بفروشند.",
+    body: [
+      "ما ترکیبی از کارگردانان، انیمیشن‌سازان و استراتژیست‌های برند هستیم که با عشق به تصویر کار می‌کنیم.",
+      "از اولین جلسه ایده‌پردازی تا تحویل نهایی، کنار شما هستیم تا پیام برندتان دقیقاً همان‌طور که می‌خواهید روایت شود.",
+    ],
+  },
+  en: {
+    eyebrow: "About us",
+    title: "We bring stories to motion",
+    lead: "Motiva Studio is a creative advertising-video studio that helps brands get seen, be remembered, and sell.",
+    body: [
+      "We are a blend of directors, animators, and brand strategists who work with a genuine love for the image.",
+      "From the first ideation session to final delivery, we stay by your side so your brand message is told exactly the way you want.",
+    ],
+  },
+}[lang]
+---
+
+<section class="section relative overflow-hidden">
+  <GradientBlobs />
+  <div class="container-x">
+    <div class="reveal max-w-3xl">
+      <span class="eyebrow mb-4">
+        <span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
+        {copy.eyebrow}
+      </span>
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+        {copy.title}
+      </h1>
+      <p class="mt-6 text-xl text-fg-muted">{copy.lead}</p>
+      <div class="mt-6 space-y-4 text-lg text-fg-muted">
+        {copy.body.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+  </div>
+</section>
+
+<StatsCounter />
+<ProcessTimeline />
+<CTA />

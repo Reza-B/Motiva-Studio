@@ -1,0 +1,83 @@
+---
+/* =============================================================
+   Hero — animated headline + looping showreel video background.
+   - [data-hero-item] elements are staggered in by initHero().
+   - Video is muted/looping/playsinline and lazy (poster first).
+   - Falls back gracefully with a gradient if video is missing.
+   ============================================================= */
+import GradientBlobs from "./GradientBlobs.astro"
+import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const tp = useTranslatedPath(lang)
+---
+
+<section
+  data-hero
+  class="grain relative flex min-h-[92vh] items-center overflow-hidden"
+>
+  {/* Showreel video background */}
+  <video
+    class="absolute inset-0 -z-20 h-full w-full object-cover opacity-40"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="none"
+    poster="/media/hero-poster.jpg"
+    aria-hidden="true"
+  >
+    <source src="/media/showreel.webm" type="video/webm" />
+    <source src="/media/showreel.mp4" type="video/mp4" />
+  </video>
+  {/* Dark scrim for legibility over video */}
+  <div
+    class="absolute inset-0 -z-10 bg-gradient-to-b from-bg/60 via-bg/70 to-bg"
+  >
+  </div>
+  <GradientBlobs />
+
+  <div class="container-x">
+    <div class="max-w-3xl">
+      <span data-hero-item class="eyebrow opacity-0">
+        <span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
+        {t("hero.badge")}
+      </span>
+
+      <h1
+        class="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
+      >
+        <span data-hero-item class="block opacity-0">{t("hero.title.1")}</span>
+        <span data-hero-item class="block text-gradient opacity-0">
+          {t("hero.title.2")}
+        </span>
+      </h1>
+
+      <p
+        data-hero-item
+        class="mt-6 max-w-xl text-lg text-fg-muted opacity-0 sm:text-xl"
+      >
+        {t("hero.subtitle")}
+      </p>
+
+      <div data-hero-item class="mt-9 flex flex-wrap gap-4 opacity-0">
+        <a href={tp("/contact")} class="btn-primary">{t("hero.cta.primary")}</a>
+        <a href={tp("/portfolio")} class="btn-ghost">
+          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+          {t("hero.cta.secondary")}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {/* Scroll hint */}
+  <div
+    class="absolute inset-x-0 bottom-8 flex flex-col items-center gap-2 text-fg-muted"
+  >
+    <span class="text-xs">{t("hero.scroll")}</span>
+    <span class="h-9 w-5 rounded-full border-2 border-fg-muted p-1">
+      <span class="mx-auto block h-2 w-1 animate-bounce rounded-full bg-fg-muted"></span>
+    </span>
+  </div>
+</section>

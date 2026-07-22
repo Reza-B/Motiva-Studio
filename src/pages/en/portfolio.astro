@@ -1,0 +1,10 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro"
+import PortfolioContent from "@components/pages/PortfolioContent.astro"
+import { getLangFromUrl, useTranslations } from "@i18n/utils"
+const t = useTranslations(getLangFromUrl(Astro.url))
+---
+
+<BaseLayout title={`${t("portfolio.title")} — ${t("site.name")}`} description={t("portfolio.subtitle")}>
+  <PortfolioContent />
+</BaseLayout>

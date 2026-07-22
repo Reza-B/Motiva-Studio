@@ -1,0 +1,21 @@
+---
+/* Persian blog post pages: /blog/<slug>. One route per fa post. */
+import { render } from "astro:content"
+import BlogPost from "@layouts/BlogPost.astro"
+import { getBlogPosts, readingMinutes, splitEntryId } from "@lib/blog"
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts("fa")
+  return posts.map((entry) => ({
+    params: { slug: splitEntryId(entry.id).slug },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+---
+
+<BlogPost entry={entry} readingTime={readingMinutes(entry)}>
+  <Content />
+</BlogPost>

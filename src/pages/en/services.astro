@@ -1,0 +1,10 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro"
+import ServicesContent from "@components/pages/ServicesContent.astro"
+import { getLangFromUrl, useTranslations } from "@i18n/utils"
+const t = useTranslations(getLangFromUrl(Astro.url))
+---
+
+<BaseLayout title={`${t("services.title")} — ${t("site.name")}`} description={t("services.subtitle")}>
+  <ServicesContent />
+</BaseLayout>

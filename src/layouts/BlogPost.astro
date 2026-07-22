@@ -1,0 +1,113 @@
+---
+/* =============================================================
+   BlogPost layout — wraps a single MDX article.
+   Adds Article + BreadcrumbList JSON-LD, reading time, cover
+   image (optimized), category/tags, and localized chrome.
+   ============================================================= */
+import { Image } from "astro:assets"
+import type { CollectionEntry } from "astro:content"
+import BaseLayout from "./BaseLayout.astro"
+import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
+import { articleSchema, breadcrumbSchema } from "@lib/structuredData"
+import { SITE_URL } from "@data/site"
+
+interface Props {
+  entry: CollectionEntry<"blog">
+  readingTime: number
+}
+
+const { entry, readingTime } = Astro.props
+const { data } = entry
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const tp = useTranslatedPath(lang)
+
+const site = SITE_URL.replace(/\/$/, "")
+const url = site + Astro.url.pathname
+const dateFmt = new Intl.DateTimeFormat(lang === "fa" ? "fa-IR" : "en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+})
+
+const jsonLd = [
+  articleSchema({
+    title: data.title,
+    description: data.description,
+    url,
+    author: data.author,
+    pubDate: data.pubDate,
+    updatedDate: data.updatedDate,
+  }),
+  breadcrumbSchema([
+    { name: t("nav.home"), url: site + tp("/") },
+    { name: t("blog.title"), url: site + tp("/blog") },
+    { name: data.title, url },
+  ]),
+]
+---
+
+<BaseLayout
+  title={`${data.title} — ${t("site.name")}`}
+  description={data.description}
+  type="article"
+  jsonLd={jsonLd}
+>
+  <article class="container-x section max-w-3xl">
+    <a
+      href={tp("/blog")}
+      class="mb-8 inline-flex items-center gap-2 text-fg-muted transition hover:text-brand-pink"
+    >
+      <span aria-hidden="true">{lang === "fa" ? "→" : "←"}</span>
+      {t("blog.back")}
+    </a>
+
+    <header class="mb-10">
+      <div class="mb-4 flex flex-wrap items-center gap-3 text-sm text-fg-muted">
+        <span class="rounded-full bg-brand-gradient-soft px-3 py-1 font-medium text-brand-pink">
+          {data.category}
+        </span>
+        <time datetime={data.pubDate.toISOString()}>
+          {dateFmt.format(data.pubDate)}
+        </time>
+        <span aria-hidden="true">•</span>
+        <span>{readingTime} {t("blog.readingTime")}</span>
+      </div>
+      <h1 class="text-4xl font-extrabold leading-tight md:text-5xl">
+        {data.title}
+      </h1>
+      <p class="mt-4 text-lg text-fg-muted">{data.description}</p>
+    </header>
+
+    {
+      data.cover && (
+        <Image
+          src={data.cover}
+          alt={data.coverAlt ?? data.title}
+          widths={[480, 800, 1200]}
+          sizes="(max-width: 768px) 100vw, 768px"
+          class="mb-10 aspect-video w-full rounded-3xl object-cover shadow-soft"
+          loading="eager"
+        />
+      )
+    }
+
+    <div
+      class="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-a:text-brand-pink prose-img:rounded-2xl"
+    >
+      <slot />
+    </div>
+
+    {
+      data.tags.length > 0 && (
+        <footer class="mt-12 flex flex-wrap gap-2 border-t border-border pt-8">
+          {data.tags.map((tag) => (
+            <span class="rounded-full border border-border px-3 py-1 text-sm text-fg-muted">
+              #{tag}
+            </span>
+          ))}
+        </footer>
+      )
+    }
+  </article>
+</BaseLayout>

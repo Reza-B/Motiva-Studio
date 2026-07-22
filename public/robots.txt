@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Update the host below to match your deployed domain.
+Sitemap: https://motiva.studio/sitemap-index.xml

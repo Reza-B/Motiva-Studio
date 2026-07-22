@@ -1,0 +1,176 @@
+/* =============================================================
+   Motiva Studio — global styles & design tokens
+   Tailwind layers + CSS variables that drive the light/dark theme
+   and per-locale typography (Vazirmatn for fa, Inter for en).
+   ============================================================= */
+
+/* Self-hosted variable fonts (no external requests → great CWV). */
+@import "@fontsource-variable/vazirmatn";
+@import "@fontsource-variable/inter";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ---- Light theme (default) ---- */
+  :root {
+    --bg: 255 255 255;
+    --bg-soft: 247 247 249;
+    --surface: 255 255 255;
+    --fg: 17 17 20;
+    --fg-muted: 90 92 105;
+    --border: 228 228 235;
+
+    /* Persian is primary → Vazirmatn is the default UI font. */
+    --font-sans: "Vazirmatn Variable", "Vazirmatn", system-ui, sans-serif;
+
+    color-scheme: light;
+  }
+
+  /* ---- Dark theme ---- */
+  .dark {
+    --bg: 10 10 14;
+    --bg-soft: 16 16 22;
+    --surface: 20 20 28;
+    --fg: 244 244 248;
+    --fg-muted: 165 167 182;
+    --border: 38 38 48;
+
+    color-scheme: dark;
+  }
+
+  /* English pages use Inter. `[lang="en"]` is set on <html> by the layout. */
+  :root[lang="en"] {
+    --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
+  }
+
+  html {
+    /* Lenis handles smooth scrolling; disable native to avoid double-smoothing. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+    /* Smooth, animated theme switch. */
+    transition: background-color 0.45s ease, color 0.45s ease;
+  }
+
+  /* Persian numerals & tighter line-height feel better in body copy. */
+  :root[lang="fa"] body {
+    line-height: 1.85;
+  }
+
+  ::selection {
+    background: #d81e77;
+    color: #fff;
+  }
+
+  /* Accessible focus ring using the brand pink. */
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid #d81e77;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Respect user motion preferences everywhere. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Brand gradient text. */
+  .text-gradient {
+    @apply bg-brand-gradient bg-clip-text text-transparent;
+  }
+
+  /* Primary gradient button. */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-gradient
+      px-7 py-3 font-semibold text-white shadow-glow transition-all duration-300
+      hover:-translate-y-0.5 hover:shadow-glow-orange active:translate-y-0;
+  }
+
+  /* Secondary / ghost button. */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-border
+      bg-surface/60 px-7 py-3 font-semibold text-fg backdrop-blur transition-all duration-300
+      hover:border-brand-pink hover:text-brand-pink;
+  }
+
+  /* Glassmorphism card. */
+  .glass {
+    @apply rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl;
+    background-image: linear-gradient(
+      135deg,
+      rgb(255 255 255 / 0.08),
+      rgb(255 255 255 / 0.02)
+    );
+  }
+
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10;
+  }
+
+  .section {
+    @apply py-20 md:py-28 lg:py-32;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-border bg-bg-soft
+      px-4 py-1.5 text-sm font-medium text-fg-muted;
+  }
+
+  /* Utility used by the scroll-reveal helper (see lib/animations.ts). */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    will-change: transform, opacity;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@layer utilities {
+  /* Subtle film-grain overlay (used on hero / CTA). */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Fade a scrolling row of logos at both edges. */
+  .mask-x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 12%,
+      #000 88%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 12%,
+      #000 88%,
+      transparent
+    );
+  }
+}

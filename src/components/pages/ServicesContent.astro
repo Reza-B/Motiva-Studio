@@ -1,0 +1,33 @@
+---
+/* Services page body — full service list + process + pricing. */
+import GradientBlobs from "@components/GradientBlobs.astro"
+import ServicesOverview from "@components/ServicesOverview.astro"
+import ProcessTimeline from "@components/ProcessTimeline.astro"
+import Pricing from "@components/Pricing.astro"
+import CTA from "@components/CTA.astro"
+import { getLangFromUrl, useTranslations } from "@i18n/utils"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+---
+
+<section class="section relative overflow-hidden pb-0">
+  <GradientBlobs />
+  <div class="container-x">
+    <div class="reveal max-w-3xl">
+      <span class="eyebrow mb-4">
+        <span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
+        {t("nav.services")}
+      </span>
+      <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+        {t("services.title")}
+      </h1>
+      <p class="mt-6 text-xl text-fg-muted">{t("services.subtitle")}</p>
+    </div>
+  </div>
+</section>
+
+<ServicesOverview />
+<ProcessTimeline />
+<Pricing />
+<CTA />

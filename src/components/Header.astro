@@ -1,0 +1,103 @@
+---
+/* =============================================================
+   Header — sticky, glassy, shrinks on scroll (see animations.ts:
+   initHeaderShrink toggles [data-scrolled]).
+   Contains desktop nav + theme toggle + language switcher, and
+   a React MobileMenu island for small screens.
+   ============================================================= */
+import ThemeToggle from "./ThemeToggle.astro"
+import LanguageSwitcher from "./LanguageSwitcher.astro"
+import MobileMenu from "./MobileMenu.tsx"
+import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const tp = useTranslatedPath(lang)
+
+const nav = [
+  { href: tp("/services"), label: t("nav.services") },
+  { href: tp("/portfolio"), label: t("nav.portfolio") },
+  { href: tp("/about"), label: t("nav.about") },
+  { href: tp("/blog"), label: t("nav.blog") },
+  { href: tp("/contact"), label: t("nav.contact") },
+]
+const current = Astro.url.pathname
+---
+
+<header
+  data-header
+  class="fixed inset-x-0 top-0 z-50 transition-all duration-300 data-[scrolled]:backdrop-blur-xl"
+>
+  <div
+    class="container-x flex items-center justify-between gap-4 py-5 transition-all duration-300 group-data-[scrolled]:py-3"
+  >
+    {/* Logo */}
+    <a
+      href={tp("/")}
+      class="flex items-center gap-2.5 font-extrabold"
+      aria-label={t("site.name")}
+    >
+      <span
+        class="grid h-9 w-9 place-items-center rounded-xl bg-brand-gradient text-white shadow-glow"
+        aria-hidden="true"
+      >
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor">
+          <path d="M8 5v14l11-7z"></path>
+        </svg>
+      </span>
+      <span class="text-lg tracking-tight">{t("site.name")}</span>
+    </a>
+
+    {/* Desktop nav */}
+    <nav
+      class="hidden items-center gap-1 lg:flex"
+      aria-label={lang === "fa" ? "ناوبری اصلی" : "Primary"}
+    >
+      {
+        nav.map((item) => {
+          const active =
+            current === item.href || current === item.href + "/"
+          return (
+            <a
+              href={item.href}
+              aria-current={active ? "page" : undefined}
+              class:list={[
+                "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                active
+                  ? "text-brand-pink"
+                  : "text-fg-muted hover:text-fg",
+              ]}
+            >
+              {item.label}
+            </a>
+          )
+        })
+      }
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <LanguageSwitcher />
+      <ThemeToggle />
+      <a href={tp("/contact")} class="btn-primary hidden !px-5 !py-2.5 text-sm md:inline-flex">
+        {t("nav.cta")}
+      </a>
+      {/* Mobile menu (React island — hydrated only on small screens interaction) */}
+      <MobileMenu
+        client:load
+        lang={lang}
+        items={[{ href: tp("/"), label: t("nav.home") }, ...nav]}
+        labels={{ open: t("menu.open"), close: t("menu.close"), cta: t("nav.cta"), ctaHref: tp("/contact") }}
+      />
+    </div>
+  </div>
+</header>
+
+{/* Spacer so content isn't hidden behind the fixed header. */}
+<div class="h-20" aria-hidden="true"></div>
+
+<style>
+  header[data-scrolled] > div {
+    background: rgb(var(--bg) / 0.7);
+    border-bottom: 1px solid rgb(var(--border) / 0.6);
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+/* =============================================================
+   ProcessTimeline — vertical "our process" steps with a
+   gradient spine and scroll-reveal. RTL-aware alignment.
+   ============================================================= */
+import SectionHeader from "./SectionHeader.astro"
+import { getLangFromUrl, useTranslations } from "@i18n/utils"
+import { processSteps } from "@data/content"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+---
+
+<section class="section relative overflow-hidden">
+  <div class="container-x">
+    <SectionHeader
+      eyebrow={t("process.title")}
+      title={t("process.title")}
+      subtitle={t("process.subtitle")}
+    />
+
+    <ol class="relative mx-auto mt-16 max-w-3xl">
+      {/* Gradient spine */}
+      <span
+        class="absolute inset-y-0 start-6 w-0.5 bg-brand-gradient md:start-1/2 md:-translate-x-1/2"
+        aria-hidden="true"></span>
+
+      {
+        processSteps.map((s, i) => (
+          <li
+            class:list={[
+              "reveal relative mb-12 ps-16 md:w-1/2 md:ps-0",
+              i % 2 === 0
+                ? "md:ms-0 md:pe-12 md:text-end"
+                : "md:ms-auto md:ps-12",
+            ]}
+            data-reveal-delay={i * 0.05}
+          >
+            <span
+              class="absolute start-0 top-0 grid h-12 w-12 place-items-center rounded-full bg-brand-gradient font-bold text-white shadow-glow md:start-auto md:-translate-y-1 ltr:md:right-0 ltr:md:translate-x-1/2 rtl:md:left-0 rtl:md:-translate-x-1/2"
+              style={i % 2 === 0 ? "" : ""}
+            >
+              {s.step}
+            </span>
+            <div class="glass rounded-3xl p-6">
+              <h3 class="text-xl font-bold">{s.title[lang]}</h3>
+              <p class="mt-2 text-fg-muted">{s.description[lang]}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

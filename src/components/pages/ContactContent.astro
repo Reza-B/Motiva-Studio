@@ -1,0 +1,65 @@
+---
+/* Contact page body — Formspree form island + social links. */
+import ContactForm from "@components/ContactForm.tsx"
+import GradientBlobs from "@components/GradientBlobs.astro"
+import { getLangFromUrl, useTranslations } from "@i18n/utils"
+import { social, FORMSPREE_ENDPOINT } from "@data/site"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+
+const labels = {
+  name: t("contact.name"),
+  email: t("contact.email"),
+  budget: t("contact.budget"),
+  message: t("contact.message"),
+  send: t("contact.send"),
+  sending: t("contact.sending"),
+  success: t("contact.success"),
+  error: t("contact.error"),
+}
+---
+
+<section class="section relative overflow-hidden">
+  <GradientBlobs />
+  <div class="container-x">
+    <div class="grid gap-12 lg:grid-cols-2">
+      {/* Left: intro + socials */}
+      <div class="reveal">
+        <span class="eyebrow mb-4">
+          <span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
+          {t("nav.contact")}
+        </span>
+        <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
+          {t("contact.title")}
+        </h1>
+        <p class="mt-4 text-lg text-fg-muted">{t("contact.subtitle")}</p>
+
+        <div class="mt-8">
+          <h2 class="mb-3 text-sm font-bold uppercase tracking-wider text-fg-muted">
+            {t("contact.social")}
+          </h2>
+          <div class="flex flex-wrap gap-3">
+            <a href={social.instagram} target="_blank" rel="noopener noreferrer" class="btn-ghost">
+              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor"></circle></svg>
+              Instagram
+            </a>
+            <a href={social.telegram} target="_blank" rel="noopener noreferrer" class="btn-ghost">
+              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor"><path d="M21.9 4.3 2.9 11.6c-1.1.4-1.1 1.6 0 2l4.9 1.5 1.8 5.7c.2.6.9.8 1.4.4l2.7-2.2 4.8 3.5c.6.4 1.4.1 1.6-.6L23.9 5.6c.2-1-.7-1.7-2-1.3z"></path></svg>
+              Telegram
+            </a>
+            <a href={`mailto:${social.email}`} class="btn-ghost">
+              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
+              {social.email}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Right: form */}
+      <div class="reveal glass rounded-3xl p-6 md:p-8">
+        <ContactForm client:visible endpoint={FORMSPREE_ENDPOINT} labels={labels} lang={lang} />
+      </div>
+    </div>
+  </div>
+</section>

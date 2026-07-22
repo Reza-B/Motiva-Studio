@@ -1,0 +1,66 @@
+---
+/* =============================================================
+   ServicesOverview — grid of service cards with scroll-reveal.
+   Data comes from @data/content (bilingual).
+   `compact` shows the short home version; full shows features.
+   ============================================================= */
+import SectionHeader from "./SectionHeader.astro"
+import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
+import { services } from "@data/content"
+
+interface Props {
+  compact?: boolean
+}
+const { compact = false } = Astro.props
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const tp = useTranslatedPath(lang)
+---
+
+<section class="section relative" id="services">
+  <div class="container-x">
+    <SectionHeader
+      eyebrow={t("nav.services")}
+      title={t("services.title")}
+      subtitle={t("services.subtitle")}
+    />
+
+    <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        services.map((s, i) => (
+          <article
+            class="reveal group relative overflow-hidden rounded-3xl border border-border bg-surface p-7 transition-all duration-300 hover:-translate-y-1 hover:border-brand-pink/50 hover:shadow-glow"
+            data-reveal-delay={i * 0.08}
+          >
+            <div class="absolute inset-0 -z-10 bg-brand-gradient-soft opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-brand-gradient text-white shadow-glow">
+              <svg viewBox="0 0 24 24" class="h-7 w-7" fill="currentColor" aria-hidden="true">
+                <path d={s.icon} />
+              </svg>
+            </span>
+            <h3 class="mt-5 text-xl font-bold">{s.title[lang]}</h3>
+            <p class="mt-2 text-fg-muted">{s.description[lang]}</p>
+            {!compact && (
+              <ul class="mt-4 space-y-2 text-sm text-fg-muted">
+                {s.features[lang].map((f) => (
+                  <li class="flex items-center gap-2">
+                    <svg viewBox="0 0 24 24" class="h-4 w-4 text-brand-pink" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+        ))
+      }
+    </div>
+
+    {
+      compact && (
+        <div class="reveal mt-10 text-center">
+          <a href={tp("/services")} class="btn-ghost">{t("services.more")}</a>
+        </div>
+      )
+    }
+  </div>
+</section>

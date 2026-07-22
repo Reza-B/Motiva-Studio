@@ -1,0 +1,26 @@
+---
+/* =============================================================
+   Marquee — infinite horizontal scroll of client logos (text).
+   Direction respects locale (RTL vs LTR). Pauses on hover.
+   The row is duplicated so the loop is seamless.
+   ============================================================= */
+import { getLangFromUrl } from "@i18n/utils"
+import { clients } from "@data/site"
+
+const lang = getLangFromUrl(Astro.url)
+const anim = lang === "fa" ? "animate-marquee-rtl" : "animate-marquee"
+---
+
+<section class="section-sm border-y border-border bg-bg-soft py-10" aria-label="Clients">
+  <div class="mask-x overflow-hidden">
+    <div class:list={["flex w-max gap-16 hover:[animation-play-state:paused]", anim]}>
+      {
+        [...clients, ...clients].map((c) => (
+          <span class="text-2xl font-bold tracking-tight text-fg-muted/60 transition hover:text-brand-pink">
+            {c}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+</section>

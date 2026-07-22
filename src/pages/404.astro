@@ -1,0 +1,21 @@
+---
+/* Shared 404 page (localized by the active URL locale). */
+import BaseLayout from "@layouts/BaseLayout.astro"
+import GradientBlobs from "@components/GradientBlobs.astro"
+import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const tp = useTranslatedPath(lang)
+---
+
+<BaseLayout title={`404 — ${t("site.name")}`} description={t("404.subtitle")} noindex>
+  <section class="grain relative flex min-h-[70vh] items-center overflow-hidden">
+    <GradientBlobs />
+    <div class="container-x text-center">
+      <p class="text-8xl font-extrabold text-gradient">404</p>
+      <h1 class="mt-4 text-3xl font-bold">{t("404.title")}</h1>
+      <p class="mt-2 text-fg-muted">{t("404.subtitle")}</p>
+      <a href={tp("/")} class="btn-primary mt-8">{t("404.home")}</a>
+    </div>
+  </section>
+</BaseLayout>

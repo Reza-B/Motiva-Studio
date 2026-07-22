@@ -1,0 +1,24 @@
+---
+/* =============================================================
+   LanguageSwitcher — toggles between fa ("/") and en ("/en").
+   Preserves the current path when switching locales.
+   ============================================================= */
+import { getLangFromUrl, getLocalizedPathname, useTranslations } from "@i18n/utils"
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const pathname = Astro.url.pathname
+const target = lang === "fa" ? "en" : "fa"
+const href = getLocalizedPathname(pathname, target)
+const label = target === "fa" ? "فا" : "EN"
+---
+
+<a
+  href={href}
+  class="grid h-10 min-w-10 place-items-center rounded-full border border-border bg-surface/60 px-3 text-sm font-bold backdrop-blur transition hover:border-brand-pink hover:text-brand-pink"
+  aria-label={t("lang.switch")}
+  title={t("lang.switch")}
+  hreflang={target}
+>
+  {label}
+</a>
