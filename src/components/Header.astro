@@ -29,7 +29,7 @@ const current = Astro.url.pathname
   class="fixed inset-x-0 top-0 z-50 transition-all duration-300 data-[scrolled]:backdrop-blur-xl"
 >
   <div
-    class="container-x flex items-center justify-between gap-4 py-5 transition-all duration-300 group-data-[scrolled]:py-3"
+    class="container-x rounded-xl flex items-center justify-between gap-4 py-5 transition-all duration-300 group-data-[scrolled]:py-3"
   >
     {/* Logo */}
     <a
@@ -37,14 +37,11 @@ const current = Astro.url.pathname
       class="flex items-center gap-2.5 font-extrabold"
       aria-label={t("site.name")}
     >
-      <span
-        class="grid h-9 w-9 place-items-center rounded-xl bg-brand-gradient text-white shadow-glow"
-        aria-hidden="true"
-      >
-        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor">
-          <path d="M8 5v14l11-7z"></path>
-        </svg>
-      </span>
+      <img
+        src="/logo.png"
+        alt={t("site.name")}
+        class="h-9 w-9 rounded-xl object-cover"
+      />
       <span class="text-lg tracking-tight">{t("site.name")}</span>
     </a>
 

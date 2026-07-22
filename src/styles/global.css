@@ -13,14 +13,17 @@
 @tailwind utilities;
 
 @layer base {
-  /* ---- Light theme (default) ---- */
+  /* ---- Light theme (default) ----
+     Soft, warm off-white palette (not pure #fff) to avoid glare.
+     `bg` is the page canvas; `surface` cards sit slightly brighter
+     on top for depth. */
   :root {
-    --bg: 255 255 255;
-    --bg-soft: 247 247 249;
-    --surface: 255 255 255;
-    --fg: 17 17 20;
-    --fg-muted: 90 92 105;
-    --border: 228 228 235;
+    --bg: 244 243 248;
+    --bg-soft: 236 235 242;
+    --surface: 253 252 255;
+    --fg: 26 26 32;
+    --fg-muted: 94 96 110;
+    --border: 223 222 232;
 
     /* Persian is primary → Vazirmatn is the default UI font. */
     --font-sans: "Vazirmatn Variable", "Vazirmatn", system-ui, sans-serif;
