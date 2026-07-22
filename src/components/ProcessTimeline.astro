@@ -37,8 +37,15 @@ const t = useTranslations(lang)
             data-reveal-delay={i * 0.05}
           >
             <span
-              class="absolute start-0 top-0 grid h-12 w-12 place-items-center rounded-full bg-brand-gradient font-bold text-white shadow-glow md:start-auto md:-translate-y-1 ltr:md:right-0 ltr:md:translate-x-1/2 rtl:md:left-0 rtl:md:-translate-x-1/2"
-              style={i % 2 === 0 ? "" : ""}
+              class:list={[
+                "absolute start-0 top-0 grid h-12 w-12 place-items-center rounded-full bg-brand-gradient font-bold text-white shadow-glow md:start-auto md:-translate-y-1",
+                /* Anchor the badge onto the centre spine. Even cards sit on
+                   the start side, odd cards on the end side, so the badge
+                   must hug the opposite edge for each. */
+                i % 2 === 0
+                  ? "ltr:md:right-0 ltr:md:translate-x-1/2 rtl:md:left-0 rtl:md:-translate-x-1/2"
+                  : "ltr:md:left-0 ltr:md:-translate-x-1/2 rtl:md:right-0 rtl:md:translate-x-1/2",
+              ]}
             >
               {s.step}
             </span>
