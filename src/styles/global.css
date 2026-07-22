@@ -84,6 +84,11 @@
     line-height: 1.85;
   }
 
+  :root[lang="fa"] :is(h1, h2, h3, h4) {
+    line-height: 1.42 !important;
+    letter-spacing: 0 !important;
+  }
+
   ::selection {
     background: #d81e77;
     color: #fff;

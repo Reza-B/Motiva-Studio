@@ -1,108 +1,128 @@
 ---
 /* Blog index body — category filter (static links) + post cards. */
-import { Image } from "astro:assets"
-import SectionHeader from "@components/SectionHeader.astro"
-import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
-import { getBlogPosts, readingMinutes, splitEntryId, collectCategories } from "@lib/blog"
+import { Image } from "astro:assets";
+import SectionHeader from "@components/SectionHeader.astro";
+import {
+	getLangFromUrl,
+	useTranslations,
+	useTranslatedPath,
+} from "@i18n/utils";
+import {
+	getBlogPosts,
+	readingMinutes,
+	splitEntryId,
+	collectCategories,
+} from "@lib/blog";
 
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
-const tp = useTranslatedPath(lang)
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const tp = useTranslatedPath(lang);
 
-const posts = await getBlogPosts(lang)
-const categories = collectCategories(posts)
+const posts = await getBlogPosts(lang);
+const categories = collectCategories(posts);
 const dateFmt = new Intl.DateTimeFormat(lang === "fa" ? "fa-IR" : "en-US", {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-})
+	year: "numeric",
+	month: "short",
+	day: "numeric",
+});
 ---
 
 <section class="section">
-  <div class="container-x">
-    <SectionHeader
-      eyebrow={t("nav.blog")}
-      title={t("blog.title")}
-      subtitle={t("blog.subtitle")}
-    />
+	<div class="container-x">
+		<SectionHeader
+			eyebrow={t("nav.blog")}
+			title={t("blog.title")}
+			subtitle={t("blog.subtitle")}
+		/>
 
-    {
-      categories.length > 0 && (
-        <div class="reveal mt-10 flex flex-wrap justify-center gap-2">
-          <span class="rounded-full bg-brand-gradient px-4 py-2 text-sm font-medium text-white">
-            {t("blog.all")}
-          </span>
-          {categories.map((c) => (
-            <span class="rounded-full border border-border px-4 py-2 text-sm text-fg-muted">
-              {c}
-            </span>
-          ))}
-        </div>
-      )
-    }
+		{
+			categories.length > 0 && (
+				<div class="reveal mt-10 flex flex-wrap justify-center gap-2">
+					<span class="rounded-full bg-brand-gradient px-4 py-2 text-sm font-medium text-white">
+						{t("blog.all")}
+					</span>
+					{categories.map((c) => (
+						<span class="rounded-full border border-border px-4 py-2 text-sm text-fg-muted cursor-pointer transition hover:border-brand-pink hover:text-brand-pink">
+							{c}
+						</span>
+					))}
+				</div>
+			)
+		}
 
-    <div class="masonry mt-12 columns-1 sm:columns-2 lg:columns-3">
-      {
-        posts.map((post, i) => {
-          const { slug } = splitEntryId(post.id)
-          return (
-            <article
-              class="masonry-item reveal card card-hover group mb-5 flex flex-col overflow-hidden"
-              data-reveal-delay={i * 0.06}
-            >
-              <a href={tp(`/blog/${slug}`)} class="block">
-                {post.data.cover ? (
-                  <Image
-                    src={post.data.cover}
-                    alt={post.data.coverAlt ?? post.data.title}
-                    widths={[400, 800]}
-                    sizes="(max-width: 768px) 100vw, 400px"
-                    class="aspect-video w-full object-cover transition duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div class="aspect-video w-full bg-brand-gradient-soft" />
-                )}
-              </a>
-              <div class="flex flex-1 flex-col p-6">
-                <div class="mb-3 flex items-center gap-3 text-xs text-fg-muted">
-                  <span class="rounded-full bg-brand-gradient-soft px-3 py-1 font-medium text-brand-pink">
-                    {post.data.category}
-                  </span>
-                  <time datetime={post.data.pubDate.toISOString()}>
-                    {dateFmt.format(post.data.pubDate)}
-                  </time>
-                  <span aria-hidden="true">•</span>
-                  <span>
-                    {readingMinutes(post)} {t("blog.readingTime")}
-                  </span>
-                </div>
-                <h2 class="text-xl font-bold leading-snug">
-                  <a href={tp(`/blog/${slug}`)} class="transition group-hover:text-brand-pink">
-                    {post.data.title}
-                  </a>
-                </h2>
-                <p class="mt-2 flex-1 text-fg-muted">{post.data.description}</p>
-                <a
-                  href={tp(`/blog/${slug}`)}
-                  class="mt-4 inline-flex items-center gap-1 font-semibold text-brand-pink"
-                >
-                  {t("blog.readmore")}
-                  <span aria-hidden="true" class="rtl:rotate-180">→</span>
-                </a>
-              </div>
-            </article>
-          )
-        })
-      }
-    </div>
+		<div class="masonry mt-12 columns-1 sm:columns-2 lg:columns-3">
+			{
+				posts.map((post, i) => {
+					const { slug } = splitEntryId(post.id);
+					return (
+						<article
+							class="masonry-item reveal card card-hover group mb-5 flex flex-col overflow-hidden"
+							data-reveal-delay={i * 0.06}
+						>
+							<a
+								href={tp(`/blog/${slug}`)}
+								class="block"
+							>
+								{post.data.cover ? (
+									<Image
+										src={post.data.cover}
+										alt={post.data.coverAlt ?? post.data.title}
+										widths={[400, 800]}
+										sizes="(max-width: 768px) 100vw, 400px"
+										class="aspect-video w-full object-cover transition duration-500 group-hover:scale-105"
+										loading="lazy"
+									/>
+								) : (
+									<div class="aspect-video w-full bg-brand-gradient-soft" />
+								)}
+							</a>
+							<div class="flex flex-1 flex-col p-6">
+								<div class="mb-3 flex items-center gap-3 text-xs text-fg-muted">
+									<span class="rounded-full bg-brand-gradient-soft px-3 py-1 font-medium text-brand-pink">
+										{post.data.category}
+									</span>
+									<time datetime={post.data.pubDate.toISOString()}>
+										{dateFmt.format(post.data.pubDate)}
+									</time>
+									<span aria-hidden="true">•</span>
+									<span>
+										{readingMinutes(post)} {t("blog.readingTime")}
+									</span>
+								</div>
+								<h2 class="text-xl font-bold leading-snug">
+									<a
+										href={tp(`/blog/${slug}`)}
+										class="transition group-hover:text-brand-pink"
+									>
+										{post.data.title}
+									</a>
+								</h2>
+								<p class="mt-2 flex-1 text-fg-muted">{post.data.description}</p>
+								<a
+									href={tp(`/blog/${slug}`)}
+									class="mt-4 inline-flex items-center gap-1 font-semibold text-brand-pink"
+								>
+									{t("blog.readmore")}
+									<span
+										aria-hidden="true"
+										class="rtl:rotate-180"
+									>
+										→
+									</span>
+								</a>
+							</div>
+						</article>
+					);
+				})
+			}
+		</div>
 
-    {
-      posts.length === 0 && (
-        <p class="mt-12 text-center text-fg-muted">
-          {lang === "fa" ? "هنوز مطلبی منتشر نشده است." : "No posts yet."}
-        </p>
-      )
-    }
-  </div>
+		{
+			posts.length === 0 && (
+				<p class="mt-12 text-center text-fg-muted">
+					{lang === "fa" ? "هنوز مطلبی منتشر نشده است." : "No posts yet."}
+				</p>
+			)
+		}
+	</div>
 </section>
