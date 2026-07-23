@@ -1,83 +1,107 @@
 ---
 /* =============================================================
-   Hero — animated headline + looping showreel video background.
-   - [data-hero-item] elements are staggered in by initHero().
-   - Video is muted/looping/playsinline and lazy (poster first).
-   - Falls back gracefully with a gradient if video is missing.
+   Hero — cinematic opening: word-by-word headline, pointer
+   spotlight, floating gradient blobs, and a tilted poster card
+   with floating stat chips.
+   (ویدیوی شوریل قبلی به فایلی اشاره می‌کرد که وجود نداشت؛
+   حذف شد و به‌جایش پوستر واقعی با افکت پارالاکس نشست.)
    ============================================================= */
-import GradientBlobs from "./GradientBlobs.astro"
-import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
-
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
-const tp = useTranslatedPath(lang)
+import GradientBlobs from "@components/GradientBlobs.astro"
 ---
 
-<section
-  data-hero
-  class="grain relative flex min-h-[92vh] items-center overflow-hidden"
->
-  {/* Showreel video background */}
-  <video
-    class="absolute inset-0 -z-20 h-full w-full object-cover opacity-40"
-    autoplay
-    muted
-    loop
-    playsinline
-    preload="none"
-    poster="/media/hero-poster.jpg"
-    aria-hidden="true"
-  >
-    <source src="/media/showreel.webm" type="video/webm" />
-    <source src="/media/showreel.mp4" type="video/mp4" />
-  </video>
-  {/* Dark scrim for legibility over video */}
-  <div
-    class="absolute inset-0 -z-10 bg-gradient-to-b from-bg/60 via-bg/70 to-bg"
-  >
-  </div>
+<section class="grain relative overflow-hidden" data-spotlight>
   <GradientBlobs />
 
-  <div class="container-x">
-    <div class="max-w-3xl">
-      <span data-hero-item class="eyebrow opacity-0">
-        <span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
-        {t("hero.badge")}
+  {/* Pointer-follow glow (initSpotlight in lib/animations.ts). */}
+  <div
+    data-spotlight-glow
+    class="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-500"
+    style="background: radial-gradient(420px circle at var(--spot-x, 50%) var(--spot-y, 30%), rgba(216,30,119,0.12), transparent 65%)"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="container-x grid items-center gap-14 py-16 md:py-24 lg:grid-cols-[1.1fr_0.9fr] lg:py-28">
+    {/* ---- copy ---- */}
+    <div>
+      <span class="eyebrow mb-6" data-hero-item style="opacity:0">
+        <span class="relative flex h-2.5 w-2.5" aria-hidden="true">
+          <span class="absolute inline-flex h-full w-full animate-pulse-ring rounded-full bg-brand-pink"></span>
+          <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand-gradient"></span>
+        </span>
+        استودیوی تولید ویدیوی تبلیغاتی
       </span>
 
-      <h1
-        class="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
-      >
-        <span data-hero-item class="block opacity-0">{t("hero.title.1")}</span>
-        <span data-hero-item class="block text-gradient opacity-0">
-          {t("hero.title.2")}
-        </span>
+      <h1 class="text-4xl font-extrabold leading-[1.35] tracking-tight sm:text-5xl lg:text-6xl">
+        <span data-words>ویدیویی می‌سازیم که</span>
+        <br />
+        <span class="text-gradient-animated" data-words>اسکرول را متوقف می‌کند</span>
       </h1>
 
-      <p
-        data-hero-item
-        class="mt-6 max-w-xl text-lg text-fg-muted opacity-0 sm:text-xl"
-      >
-        {t("hero.subtitle")}
+      <p class="mt-7 max-w-xl text-lg leading-9 text-fg-muted md:text-xl" data-hero-item style="opacity:0">
+        مخاطب شما هر روز از کنار صدها ویدیو رد می‌شود. کار ما این است که جلوی
+        ویدیوی شما بایستد، تا آخر تماشا کند و بعدش یک قدم به خرید نزدیک‌تر شود —
+        از ریلز و تیزر تا موشن گرافیک و فیلم برند.
       </p>
 
-      <div data-hero-item class="mt-9 flex flex-wrap gap-4 opacity-0">
-        <a href={tp("/contact")} class="btn-primary">{t("hero.cta.primary")}</a>
-        <a href={tp("/portfolio")} class="btn-ghost">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
-          {t("hero.cta.secondary")}
+      <div class="mt-9 flex flex-wrap items-center gap-4" data-hero-item style="opacity:0">
+        <a href="/contact" class="btn-primary">
+          شروع پروژه
+          <svg viewBox="0 0 24 24" class="h-4 w-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
         </a>
+        <a href="/portfolio" class="btn-ghost">
+          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+          تماشای نمونه‌کارها
+        </a>
+      </div>
+
+      <p class="mt-8 text-sm text-fg-muted" data-hero-item style="opacity:0">
+        از کافهٔ محله تا فروشگاه آنلاین — هر برندی قصه‌ای دارد که ارزش دیده‌شدن دارد.
+      </p>
+    </div>
+
+    {/* ---- visual ---- */}
+    <div class="relative" data-hero-item style="opacity:0">
+      <div class="relative mx-auto max-w-md lg:max-w-none" data-tilt>
+        {/* Gradient frame */}
+        <div class="absolute -inset-1 rounded-[2rem] bg-brand-gradient opacity-40 blur-lg" aria-hidden="true"></div>
+
+        <figure class="relative overflow-hidden rounded-[2rem] border border-border shadow-soft">
+          <img
+            src="/media/hero-poster.jpg"
+            alt="پشت صحنهٔ ضبط یک ویدیوی تبلیغاتی در استودیو موتیوا"
+            class="aspect-[4/5] w-full object-cover"
+            width="640"
+            height="800"
+            fetchpriority="high"
+          />
+          {/* Cinematic vignette */}
+          <div class="absolute inset-0 bg-gradient-to-t from-bg/70 via-transparent to-transparent" aria-hidden="true"></div>
+
+          <figcaption class="absolute inset-x-0 bottom-0 flex items-center gap-3 p-5">
+            <span class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-brand-gradient text-white shadow-glow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+            </span>
+            <span class="text-sm font-semibold text-white">هر فریم، یک دلیل برای ماندن</span>
+          </figcaption>
+        </figure>
+
+        {/* Floating chips */}
+        <div class="glass absolute -right-5 top-8 hidden items-center gap-2 px-4 py-2.5 text-sm font-bold sm:flex" data-parallax="0.25">
+          ⚡ قلاب در ۳ ثانیهٔ اول
+        </div>
+        <div class="glass absolute -left-6 bottom-16 hidden items-center gap-2 px-4 py-2.5 text-sm font-bold sm:flex" data-parallax="0.45">
+          🎬 از ایده تا انتشار
+        </div>
       </div>
     </div>
   </div>
 
-  {/* Scroll hint */}
-  <div
-    class="absolute inset-x-0 bottom-8 flex flex-col items-center gap-2 text-fg-muted"
-  >
-    <span class="text-xs">{t("hero.scroll")}</span>
-    <span class="h-9 w-5 rounded-full border-2 border-fg-muted p-1">
-      <span class="mx-auto block h-2 w-1 animate-bounce rounded-full bg-fg-muted"></span>
+  {/* Scroll cue */}
+  <div class="pointer-events-none mx-auto mb-8 flex w-fit flex-col items-center gap-2 text-fg-muted" data-hero-item style="opacity:0" aria-hidden="true">
+    <span class="text-xs">ادامه را ببینید</span>
+    <span class="block h-9 w-5 rounded-full border border-border p-1">
+      <span class="mx-auto block h-2 w-1 animate-bounce rounded-full bg-brand-gradient"></span>
     </span>
   </div>
 </section>

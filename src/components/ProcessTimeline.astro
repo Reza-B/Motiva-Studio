@@ -1,61 +1,40 @@
 ---
 /* =============================================================
-   ProcessTimeline — vertical "our process" steps with a
-   gradient spine and scroll-reveal. RTL-aware alignment.
+   Process timeline — 5 steps on a vertical spine.
+   The spine "draws" itself while you scroll
+   ([data-timeline-progress] → initTimelineDraw).
    ============================================================= */
-import SectionHeader from "./SectionHeader.astro"
-import { getLangFromUrl, useTranslations } from "@i18n/utils"
+import SectionHeader from "@components/SectionHeader.astro"
 import { processSteps } from "@data/content"
-
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
 ---
 
-<section class="section relative overflow-hidden">
+<section class="section">
   <div class="container-x">
     <SectionHeader
-      eyebrow={t("process.title")}
-      title={t("process.title")}
-      subtitle={t("process.subtitle")}
+      eyebrow="مسیر پروژه"
+      title="از ایده تا انتشار، در ۵ قدم"
+      subtitle="هیچ مرحله‌ای در تاریکی نمی‌ماند؛ همیشه می‌دانید پروژه کجاست و قدم بعدی چیست."
     />
 
-    <ol class="relative mx-auto mt-16 max-w-3xl">
-      {/* Gradient spine */}
-      <span
-        class="absolute inset-y-0 start-6 w-0.5 bg-brand-gradient md:start-1/2 md:-translate-x-1/2"
-        aria-hidden="true"></span>
+    <div class="relative mx-auto mt-16 max-w-3xl">
+      {/* Spine + animated progress */}
+      <div class="absolute inset-y-0 right-6 w-px bg-border sm:right-8" aria-hidden="true">
+        <div data-timeline-progress class="h-full w-full origin-top scale-y-0 bg-brand-gradient"></div>
+      </div>
 
-      {
-        processSteps.map((s, i) => (
-          <li
-            class:list={[
-              "reveal relative mb-12 ps-16 md:w-1/2 md:ps-0",
-              i % 2 === 0
-                ? "md:ms-0 md:pe-12 md:text-end"
-                : "md:ms-auto md:ps-12",
-            ]}
-            data-reveal-delay={i * 0.05}
-          >
-            <span
-              class:list={[
-                "absolute start-0 top-0 grid h-12 w-12 place-items-center rounded-full bg-brand-gradient font-bold text-white shadow-glow md:start-auto md:-translate-y-1",
-                /* Anchor the badge onto the centre spine. Even cards sit on
-                   the start side, odd cards on the end side, so the badge
-                   must hug the opposite edge for each. */
-                i % 2 === 0
-                  ? "ltr:md:right-0 ltr:md:translate-x-1/2 rtl:md:left-0 rtl:md:-translate-x-1/2"
-                  : "ltr:md:left-0 ltr:md:-translate-x-1/2 rtl:md:right-0 rtl:md:translate-x-1/2",
-              ]}
-            >
-              {s.step}
-            </span>
-            <div class="glass rounded-3xl p-6">
-              <h3 class="text-xl font-bold">{s.title[lang]}</h3>
-              <p class="mt-2 text-fg-muted">{s.description[lang]}</p>
-            </div>
-          </li>
-        ))
-      }
-    </ol>
+      <ol class="space-y-10">
+        {
+          processSteps.map((s, i) => (
+            <li class="reveal relative pr-20 sm:pr-24" data-reveal-delay={i * 80}>
+              <span class="absolute right-0 top-0 grid h-12 w-12 place-items-center rounded-full bg-brand-gradient text-lg font-extrabold text-white shadow-glow sm:h-16 sm:w-16 sm:text-xl">
+                {s.step}
+              </span>
+              <h3 class="text-xl font-bold">{s.title}</h3>
+              <p class="mt-2 leading-8 text-fg-muted">{s.description}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
   </div>
 </section>

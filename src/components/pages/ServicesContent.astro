@@ -1,31 +1,36 @@
 ---
-/* Services page body — full service list + process + pricing. */
-import GradientBlobs from "@components/GradientBlobs.astro"
-import ServicesOverview from "@components/ServicesOverview.astro"
-import WhyMotiva from "@components/WhyMotiva.astro"
-import ProcessTimeline from "@components/ProcessTimeline.astro"
-import Pricing from "@components/Pricing.astro"
-import CTA from "@components/CTA.astro"
-import { getLangFromUrl, useTranslations } from "@i18n/utils"
-
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
+/* Services page body — hero + service list + why + process + pricing. */
+import GradientBlobs from "@components/GradientBlobs.astro";
+import ServicesOverview from "@components/ServicesOverview.astro";
+import WhyMotiva from "@components/WhyMotiva.astro";
+import ProcessTimeline from "@components/ProcessTimeline.astro";
+import Pricing from "@components/Pricing.astro";
+import CTA from "@components/CTA.astro";
 ---
 
-<section class="section relative overflow-hidden pb-0">
-  <GradientBlobs />
-  <div class="container-x">
-    <div class="reveal max-w-3xl">
-      <span class="eyebrow mb-4">
-        <span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
-        {t("nav.services")}
-      </span>
-      <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-        {t("services.title")}
-      </h1>
-      <p class="mt-6 text-xl text-fg-muted">{t("services.subtitle")}</p>
-    </div>
-  </div>
+<section class="section relative overflow-hidden pb-10 md:pb-16 lg:pb-20">
+	<GradientBlobs />
+	<div class="container-x">
+		<div class="reveal max-w-3xl">
+			<span class="eyebrow mb-4">
+				<span
+					class="h-2 w-2 rounded-full bg-brand-gradient"
+					aria-hidden="true"
+				></span>
+				خدمات ما
+			</span>
+			<h1
+				class="text-3xl leading-[1.35] tracking-tight font-bold sm:text-5xl lg:text-6xl"
+			>
+				دیده شدن برند شما <span class="text-gradient-animated">کار ماست!</span>
+			</h1>
+			<p class="mt-6 text-xl leading-9 text-fg-muted">
+				قبل از انتخاب فرمت، از هدفتان می‌پرسیم: فروش بیشتر؟ معرفی محصول تازه؟
+				دیده‌شدن در اینستاگرام؟ بعد فرمتی را پیشنهاد می‌دهیم که سریع‌ترین مسیر
+				به آن هدف است.
+			</p>
+		</div>
+	</div>
 </section>
 
 <ServicesOverview showHeader={false} />

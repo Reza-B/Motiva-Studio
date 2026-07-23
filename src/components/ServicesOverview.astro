@@ -1,73 +1,57 @@
 ---
 /* =============================================================
-   ServicesOverview — grid of service cards with scroll-reveal.
-   Data comes from @data/content (bilingual).
-   `compact` shows the short home version; full shows features.
+   Services grid — gradient-border cards with icon, copy and
+   feature list. Used on home (with header) and services page.
    ============================================================= */
-import SectionHeader from "./SectionHeader.astro"
-import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
+import SectionHeader from "@components/SectionHeader.astro"
 import { services } from "@data/content"
 
 interface Props {
-  compact?: boolean
-  /* Hide the section header when a page already provides its own hero
-     title (e.g. the Services page), to avoid a duplicate heading. */
   showHeader?: boolean
 }
-const { compact = false, showHeader = true } = Astro.props
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
-const tp = useTranslatedPath(lang)
+const { showHeader = true } = Astro.props
 ---
 
-<section class="section relative" id="services">
+<section class="section">
   <div class="container-x">
     {
       showHeader && (
         <SectionHeader
-          eyebrow={t("nav.services")}
-          title={t("services.title")}
-          subtitle={t("services.subtitle")}
+          eyebrow="خدمات ما"
+          title="هر قالبی از ویدیو که برندتان لازم دارد"
+          subtitle="از ریلز ۱۵ ثانیه‌ای تا فیلم برند سینمایی؛ فرمت را بر اساس هدف شما انتخاب می‌کنیم، نه برعکس."
         />
       )
     }
 
-    <div class:list={["grid gap-6 sm:grid-cols-2 lg:grid-cols-4", showHeader ? "mt-14" : "mt-2"]}>
+    <div class:list={["grid gap-5 sm:grid-cols-2 lg:grid-cols-4", showHeader ? "mt-14" : "mt-4"]}>
       {
         services.map((s, i) => (
           <article
-            class="reveal group relative overflow-hidden rounded-3xl border border-border bg-surface p-7 transition-all duration-300 hover:-translate-y-1 hover:border-brand-pink/50 hover:shadow-glow"
-            data-reveal-delay={i * 0.08}
+            id={s.id}
+            class="card-gradient reveal group flex flex-col rounded-[1.75rem] p-7"
+            data-reveal-delay={i * 90}
           >
-            <div class="absolute inset-0 -z-10 bg-brand-gradient-soft opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-brand-gradient text-white shadow-glow">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-brand-gradient-soft text-brand-pink transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
               <svg viewBox="0 0 24 24" class="h-7 w-7" fill="currentColor" aria-hidden="true">
                 <path d={s.icon} />
               </svg>
             </span>
-            <h3 class="mt-5 text-xl font-bold">{s.title[lang]}</h3>
-            <p class="mt-2 text-fg-muted">{s.description[lang]}</p>
-            {!compact && (
-              <ul class="mt-4 space-y-2 text-sm text-fg-muted">
-                {s.features[lang].map((f) => (
-                  <li class="flex items-center gap-2">
-                    <svg viewBox="0 0 24 24" class="h-4 w-4 text-brand-pink" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-            )}
+            <h3 class="mt-5 text-xl font-bold">{s.title}</h3>
+            <p class="mt-3 flex-1 leading-8 text-fg-muted">{s.description}</p>
+            <ul class="mt-5 space-y-2 border-t border-border pt-5 text-sm text-fg-muted">
+              {s.features.map((f) => (
+                <li class="flex items-center gap-2">
+                  <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-brand-pink" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m5 13 4 4L19 7" />
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
           </article>
         ))
       }
     </div>
-
-    {
-      compact && (
-        <div class="reveal mt-10 text-center">
-          <a href={tp("/services")} class="btn-ghost">{t("services.more")}</a>
-        </div>
-      )
-    }
   </div>
 </section>

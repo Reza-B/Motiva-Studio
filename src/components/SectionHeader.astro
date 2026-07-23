@@ -1,23 +1,24 @@
 ---
-/* Small reusable section heading with eyebrow + title + subtitle. */
+/* Section heading block: eyebrow chip + title + optional subtitle. */
 interface Props {
   eyebrow?: string
   title: string
   subtitle?: string
-  center?: boolean
+  align?: "center" | "start"
 }
-const { eyebrow, title, subtitle, center = true } = Astro.props
+const { eyebrow, title, subtitle, align = "center" } = Astro.props
+const centered = align === "center"
 ---
 
-<div class:list={["reveal max-w-2xl", center && "mx-auto text-center"]}>
-  {eyebrow && (
-    <span class="eyebrow mb-4">
-      <span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
-      {eyebrow}
-    </span>
-  )}
-  <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-    {title}
-  </h2>
-  {subtitle && <p class="mt-4 text-lg text-fg-muted">{subtitle}</p>}
+<div class:list={["reveal max-w-3xl", centered ? "mx-auto text-center" : ""]}>
+  {
+    eyebrow && (
+      <span class="eyebrow mb-4">
+        <span class="h-2 w-2 rounded-full bg-brand-gradient" aria-hidden="true" />
+        {eyebrow}
+      </span>
+    )
+  }
+  <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">{title}</h2>
+  {subtitle && <p class="mt-4 text-lg leading-8 text-fg-muted">{subtitle}</p>}
 </div>

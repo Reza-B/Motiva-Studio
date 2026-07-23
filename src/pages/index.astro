@@ -1,17 +1,12 @@
 ---
-/* Persian (default) home — served at "/". */
 import BaseLayout from "@layouts/BaseLayout.astro"
 import HomeSections from "@components/pages/HomeSections.astro"
-import { getLangFromUrl, useTranslations } from "@i18n/utils"
-
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
 ---
 
 <BaseLayout
-  title={t("seo.home.title")}
-  description={t("seo.home.desc")}
-  keywords={t("seo.home.keywords")}
+  title="استودیو موتیوا — ساخت ویدیوی تبلیغاتی، تیزر و موشن گرافیک"
+  description="موتیوا استودیوی تولید ویدیوی تبلیغاتی است؛ ریلز اینستاگرام، تیزر محصول، موشن گرافیک و فیلم برند — ویدیویی که دیده می‌شود و می‌فروشد."
+  keywords="ساخت ویدیوی تبلیغاتی, تیزر تبلیغاتی, موشن گرافیک, ریلز اینستاگرام, فیلم برند, استودیو موتیوا"
 >
   <HomeSections />
 </BaseLayout>

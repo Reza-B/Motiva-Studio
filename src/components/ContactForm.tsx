@@ -1,106 +1,124 @@
 /* =============================================================
-   ContactForm — React island. Submits to Formspree via fetch
-   (no custom backend). Handles loading / success / error states
-   with Framer Motion feedback. Fully labelled & keyboard-friendly.
+   Contact form — React island posting to Formspree (no backend).
+   Client-side validation + honest error handling. If the
+   Formspree ID is still the placeholder, we show a helpful
+   fallback message with a direct email link instead of failing
+   silently.
    ============================================================= */
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-
-interface Labels {
-  name: string
-  email: string
-  budget: string
-  message: string
-  send: string
-  sending: string
-  success: string
-  error: string
-}
+import { motion } from "framer-motion"
 
 interface Props {
   endpoint: string
-  labels: Labels
-  lang: "fa" | "en"
+  email: string
 }
 
-type Status = "idle" | "loading" | "success" | "error"
+type Status = "idle" | "sending" | "success" | "error" | "unconfigured"
 
-export default function ContactForm({ endpoint, labels }: Props) {
+const budgets = [
+  "زیر ۱۰ میلیون تومان",
+  "۱۰ تا ۳۰ میلیون تومان",
+  "۳۰ تا ۱۰۰ میلیون تومان",
+  "بالای ۱۰۰ میلیون تومان",
+  "هنوز نمی‌دانم",
+]
+
+export default function ContactForm({ endpoint, email }: Props) {
   const [status, setStatus] = useState<Status>("idle")
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const form = e.currentTarget
-    setStatus("loading")
+
+    // Placeholder guard — tells the owner what to configure.
+    if (endpoint.includes("xxxxxxxx")) {
+      setStatus("unconfigured")
+      return
+    }
+
+    setStatus("sending")
     try {
       const res = await fetch(endpoint, {
         method: "POST",
-        body: new FormData(form),
         headers: { Accept: "application/json" },
+        body: new FormData(form),
       })
-      if (res.ok) {
-        setStatus("success")
-        form.reset()
-      } else {
-        setStatus("error")
-      }
+      if (!res.ok) throw new Error(String(res.status))
+      form.reset()
+      setStatus("success")
     } catch {
       setStatus("error")
     }
   }
 
-  const field =
-    "w-full rounded-2xl border border-border bg-surface px-4 py-3 outline-none transition focus:border-brand-pink"
+  const inputCls =
+    "w-full rounded-2xl border border-border bg-bg-soft px-5 py-3.5 text-fg placeholder:text-fg-muted/60 " +
+    "outline-none transition focus:border-brand-pink focus:ring-2 focus:ring-brand-pink/30"
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
-      <div className="grid gap-5 sm:grid-cols-2">
+    <form onSubmit={onSubmit} dir="rtl" noValidate={false}>
+      <h2 className="text-xl font-extrabold">فرم شروع پروژه</h2>
+      <p className="mt-1.5 text-sm leading-7 text-fg-muted">
+        چند خط بنویسید؛ حداکثر تا یک روز کاری بعد جواب می‌دهیم.
+      </p>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-2 block text-sm font-medium">{labels.name}</span>
-          <input name="name" type="text" required autoComplete="name" className={field} />
+          <span className="mb-1.5 block text-sm font-medium">نام و نام خانوادگی</span>
+          <input name="name" required autoComplete="name" className={inputCls} placeholder="مثلاً سارا محمدی" />
         </label>
         <label className="block">
-          <span className="mb-2 block text-sm font-medium">{labels.email}</span>
-          <input name="email" type="email" required autoComplete="email" className={field} />
+          <span className="mb-1.5 block text-sm font-medium">ایمیل</span>
+          <input type="email" name="email" required autoComplete="email" dir="ltr" className={inputCls + " text-left"} placeholder="you@email.com" />
         </label>
       </div>
 
-      <label className="block">
-        <span className="mb-2 block text-sm font-medium">{labels.budget}</span>
-        <input name="budget" type="text" className={field} />
+      <label className="mt-4 block">
+        <span className="mb-1.5 block text-sm font-medium">حدود بودجه</span>
+        <select name="budget" className={inputCls} defaultValue={budgets[4]}>
+          {budgets.map((b) => (
+            <option key={b} value={b}>
+              {b}
+            </option>
+          ))}
+        </select>
       </label>
 
-      <label className="block">
-        <span className="mb-2 block text-sm font-medium">{labels.message}</span>
-        <textarea name="message" required rows={5} className={field} />
+      <label className="mt-4 block">
+        <span className="mb-1.5 block text-sm font-medium">دربارهٔ پروژه</span>
+        <textarea
+          name="message"
+          required
+          rows={5}
+          className={inputCls + " resize-y"}
+          placeholder="چه کسب‌وکاری دارید؟ چه ویدیویی در ذهنتان است؟ چه زمانی مد نظرتان است؟"
+        />
       </label>
 
-      <button
-        type="submit"
-        disabled={status === "loading"}
-        className="btn-primary w-full disabled:opacity-60"
-      >
-        {status === "loading" ? labels.sending : labels.send}
+      <button type="submit" disabled={status === "sending"} className="btn-primary mt-6 w-full disabled:opacity-60">
+        {status === "sending" ? "در حال ارسال…" : "ارسال درخواست"}
       </button>
 
-      <AnimatePresence>
-        {(status === "success" || status === "error") && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            role="status"
-            className={
-              "rounded-2xl px-4 py-3 text-center text-sm " +
-              (status === "success"
-                ? "bg-green-500/15 text-green-500"
-                : "bg-red-500/15 text-red-500")
-            }
-          >
-            {status === "success" ? labels.success : labels.error}
-          </motion.p>
-        )}
-      </AnimatePresence>
+      {status === "success" && (
+        <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 rounded-2xl border border-green-500/30 bg-green-500/10 px-5 py-3.5 text-sm leading-7 text-green-300" role="status">
+          پیامتان رسید ✅ خیلی زود از طرف موتیوا خبری می‌شنوید.
+        </motion.p>
+      )}
+      {status === "error" && (
+        <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-3.5 text-sm leading-7 text-red-300" role="alert">
+          ارسال نشد 😓 لطفاً دوباره تلاش کنید یا مستقیم به{" "}
+          <a href={`mailto:${email}`} className="font-bold underline" dir="ltr">{email}</a>{" "}
+          ایمیل بزنید.
+        </motion.p>
+      )}
+      {status === "unconfigured" && (
+        <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-3.5 text-sm leading-7 text-amber-300" role="alert">
+          فرم هنوز به سرویس ارسال متصل نشده (شناسهٔ Formspree در <code dir="ltr">src/data/site.ts</code> را تنظیم کنید).
+          فعلاً می‌توانید به{" "}
+          <a href={`mailto:${email}`} className="font-bold underline" dir="ltr">{email}</a>{" "}
+          ایمیل بزنید.
+        </motion.p>
+      )}
     </form>
   )
 }

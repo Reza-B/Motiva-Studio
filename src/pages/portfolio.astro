@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro"
 import PortfolioContent from "@components/pages/PortfolioContent.astro"
-import { getLangFromUrl, useTranslations } from "@i18n/utils"
-const t = useTranslations(getLangFromUrl(Astro.url))
 ---
 
-<BaseLayout title={t("seo.portfolio.title")} description={t("seo.portfolio.desc")} keywords={t("seo.portfolio.keywords")}>
+<BaseLayout
+  title="نمونه‌کارها — استودیو موتیوا"
+  description="نمونه‌کارهای استودیو موتیوا را تماشا کنید؛ ریلز، تیزر محصول، موشن گرافیک و فیلم برند برای کسب‌وکارهای مختلف."
+  keywords="نمونه کار ویدیو, نمونه تیزر تبلیغاتی, نمونه موشن گرافیک, پورتفولیو ویدیو"
+>
   <PortfolioContent />
 </BaseLayout>

@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro"
 import ServicesContent from "@components/pages/ServicesContent.astro"
-import { getLangFromUrl, useTranslations } from "@i18n/utils"
-const t = useTranslations(getLangFromUrl(Astro.url))
 ---
 
-<BaseLayout title={t("seo.services.title")} description={t("seo.services.desc")} keywords={t("seo.services.keywords")}>
+<BaseLayout
+  title="خدمات — استودیو موتیوا"
+  description="خدمات استودیو موتیوا: ریلز و ویدیوی شبکه‌های اجتماعی، تیزر تبلیغاتی محصول، موشن گرافیک و فیلم برند — با قیمت شفاف و تحویل سر وقت."
+  keywords="خدمات ویدیوسازی, تیزر تبلیغاتی, موشن گرافیک, ریلز اینستاگرام, فیلم برند, قیمت ساخت تیزر"
+>
   <ServicesContent />
 </BaseLayout>

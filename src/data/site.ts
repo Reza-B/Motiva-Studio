@@ -1,6 +1,6 @@
 /* =============================================================
-   Global site configuration & social links.
-   Edit these values to rebrand / re-point the site.
+   پیکربندی کلی سایت و لینک‌های اجتماعی.
+   برای تغییر برند یا آدرس‌ها فقط همین فایل را ویرایش کنید.
    ============================================================= */
 
 export const SITE_URL = "https://motiva.studio"
@@ -13,13 +13,14 @@ export const social = {
 }
 
 /**
- * Formspree endpoint for the (backendless) contact form.
- * Create a free form at https://formspree.io and paste its ID here.
+ * Endpoint فرم تماس (Formspree، بدون بک‌اند).
+ * یک فرم رایگان در https://formspree.io بسازید و شناسه‌اش را اینجا بگذارید.
+ * تا وقتی شناسه واقعی نگذاشته‌اید، فرم پیام خطا نشان می‌دهد.
  */
-export const FORMSPREE_ID = "xxxxxxxx" // e.g. "mvojabcd"
+export const FORMSPREE_ID = "xxxxxxxx" // مثلاً "mvojabcd"
 export const FORMSPREE_ENDPOINT = "https://formspree.io/f/" + FORMSPREE_ID
 
-/** Address for LocalBusiness structured data. */
+/** نشانی برای دادهٔ ساخت‌یافتهٔ LocalBusiness. */
 export const business = {
   legalName: "Motiva Studio",
   streetAddress: "Valiasr St.",
@@ -32,22 +33,28 @@ export const business = {
   priceRange: "$$",
 }
 
-/** Client logos for the marquee (text-based to stay dependency-free). */
-export const clients = [
-  "Digikala",
-  "Snapp",
-  "Tapsi",
-  "Filimo",
-  "Divar",
-  "Cafe Bazaar",
-  "Alibaba",
-  "Zarrin",
+/**
+ * صنایعی که برایشان ویدیو می‌سازیم — در نوار متحرک صفحهٔ اصلی نمایش داده
+ * می‌شود. (به‌جای لوگوی مشتریانِ فرضی، حوزه‌های کاری واقعی را می‌گوییم.)
+ */
+export const industries = [
+  "کافه و رستوران",
+  "فروشگاه آنلاین",
+  "کلینیک زیبایی",
+  "املاک و مستغلات",
+  "استارتاپ و اپلیکیشن",
+  "پوشاک و مد",
+  "آموزش آنلاین",
+  "سلامت و ورزش",
 ]
 
-/** Homepage stats counters. Keys map to ui strings in i18n/ui.ts. */
+/**
+ * شمارنده‌های صفحهٔ اصلی.
+ * ⚠️ این اعداد را با آمار واقعی کسب‌وکارتان جایگزین کنید.
+ */
 export const stats = [
-  { value: 320, suffix: "+", key: "stats.projects" as const },
-  { value: 140, suffix: "+", key: "stats.clients" as const },
-  { value: 85, suffix: "M", key: "stats.views" as const },
-  { value: 24, suffix: "", key: "stats.awards" as const },
+  { value: 320, suffix: "+", label: "پروژهٔ تحویل‌شده" },
+  { value: 140, suffix: "+", label: "مشتری همراه" },
+  { value: 85, suffix: "M", label: "بازدید ویدیوها (میلیون)" },
+  { value: 24, suffix: "", label: "جایزه و تقدیر" },
 ]

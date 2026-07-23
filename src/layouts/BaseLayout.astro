@@ -1,119 +1,98 @@
 ---
 /* =============================================================
-   BaseLayout — the HTML shell for every page.
-   - Sets <html lang dir> based on the active locale.
-   - Injects SEO meta + JSON-LD.
-   - Boots the theme (before paint, no FOUC) + Lenis + GSAP.
-   - Enables Astro View Transitions (<ClientRouter />).
+   BaseLayout — shared page shell.
+   RTL Persian, fixed cinematic dark theme, view transitions,
+   Lenis smooth scrolling and the GSAP animation engine.
    ============================================================= */
-import "../styles/global.css"
-import { ClientRouter } from "astro:transitions"
-import SEO from "@components/SEO.astro"
-import Header from "@components/Header.astro"
-import Footer from "@components/Footer.astro"
-import { getLangFromUrl } from "@i18n/utils"
-import { dir } from "@i18n/ui"
-import { organizationSchema, localBusinessSchema } from "@lib/structuredData"
+import { ClientRouter } from "astro:transitions";
+import SEO from "@components/SEO.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import "@/styles/global.css";
 
 interface Props {
-  title: string
-  description: string
-  keywords?: string
-  image?: string
-  type?: "website" | "article"
-  jsonLd?: Record<string, unknown>[]
-  noindex?: boolean
+	title: string;
+	description: string;
+	keywords?: string;
+	type?: "website" | "article";
+	image?: string;
+	noindex?: boolean;
+	jsonLd?: object[];
 }
 
-const lang = getLangFromUrl(Astro.url)
-const { title, description, keywords, image, type, jsonLd = [], noindex } =
-  Astro.props
-
-// Every page carries Organization + LocalBusiness structured data.
-const baseSchema = [organizationSchema(lang), localBusinessSchema(lang)]
+const props = Astro.props;
 ---
 
 <!doctype html>
-<html lang={lang} dir={dir[lang]}>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/logo.png" />
-    <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#D81E77" />
+<html
+	lang="fa"
+	dir="rtl"
+>
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1"
+		/>
+		<meta
+			name="generator"
+			content={Astro.generator}
+		/>
+		<meta
+			name="theme-color"
+			content="#0F0B14"
+		/>
 
-    <SEO
-      title={title}
-      description={description}
-      keywords={keywords}
-      lang={lang}
-      image={image}
-      type={type}
-      jsonLd={[...baseSchema, ...jsonLd]}
-      noindex={noindex}
-    />
+		<link
+			rel="icon"
+			type="image/svg+xml"
+			href="/logo.png"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			href="/logo.png"
+		/>
+		<link
+			rel="apple-touch-icon"
+			href="/logo.png"
+		/>
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="بلاگ استودیو موتیوا"
+			href="/rss.xml"
+		/>
 
-    {/* RSS discovery */}
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title="Motiva Studio Blog"
-      href="/rss.xml"
-    />
+		<SEO {...props} />
+		<ClientRouter />
+	</head>
 
-    {/* Theme boot: runs before paint to prevent a flash of the wrong theme. */}
-    <script is:inline>
-      ;(() => {
-        try {
-          const stored = localStorage.getItem("theme")
-          const prefersDark = window.matchMedia(
-            "(prefers-color-scheme: dark)",
-          ).matches
-          const theme = stored || (prefersDark ? "dark" : "light")
-          document.documentElement.classList.toggle("dark", theme === "dark")
-        } catch (e) {}
-      })()
-    </script>
+	<body class="min-h-screen overflow-x-clip">
+		<a
+			href="#main"
+			class="fixed right-4 top-4 z-[100] -translate-y-24 rounded-full bg-brand-gradient px-5 py-2 text-sm font-bold text-white transition focus:translate-y-0"
+		>
+			پرش به محتوا
+		</a>
 
-    {/* Keep the theme across View Transitions swaps (before-swap fires early). */}
-    <script is:inline>
-      document.addEventListener("astro:before-swap", (ev) => {
-        const isDark = document.documentElement.classList.contains("dark")
-        ev.newDocument.documentElement.classList.toggle("dark", isDark)
-      })
-    </script>
+		<Header />
 
-    <ClientRouter />
-  </head>
+		<main id="main">
+			<slot />
+		</main>
 
-  <body>
-    <a
-      href="#main"
-      class="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-4 focus:start-4 focus:rounded-full focus:bg-brand-gradient focus:px-5 focus:py-2 focus:text-white"
-    >
-      {lang === "fa" ? "پرش به محتوا" : "Skip to content"}
-    </a>
+		<Footer />
 
-    <Header />
+		<script>
+			import { initLenis } from "@lib/lenis";
+			import { initAllAnimations } from "@lib/animations";
 
-    <main id="main">
-      <slot />
-    </main>
-
-    <Footer />
-
-    {/* Animations + smooth scroll. Loaded as a module; re-runs after each
-        View Transition navigation via astro:page-load. */}
-    <script>
-      import { initLenis } from "@lib/lenis"
-      import { initAllAnimations } from "@lib/animations"
-
-      function boot() {
-        initLenis()
-        initAllAnimations()
-      }
-      // Fires on first load AND after every View Transition navigation.
-      document.addEventListener("astro:page-load", boot)
-    </script>
-  </body>
+			// Runs on first load and after every view transition.
+			document.addEventListener("astro:page-load", () => {
+				initLenis();
+				initAllAnimations();
+			});
+		</script>
+	</body>
 </html>

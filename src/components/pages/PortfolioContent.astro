@@ -3,15 +3,11 @@
 import SectionHeader from "@components/SectionHeader.astro"
 import PortfolioGallery from "@components/PortfolioGallery.tsx"
 import CTA from "@components/CTA.astro"
-import { getLangFromUrl, useTranslations } from "@i18n/utils"
-import { getPortfolioItems, splitEntryId } from "@lib/blog"
+import { getPortfolioItems, entrySlug } from "@lib/blog"
 
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
-
-const entries = await getPortfolioItems(lang)
+const entries = await getPortfolioItems()
 const items = entries.map((e) => ({
-  slug: splitEntryId(e.id).slug,
+  slug: entrySlug(e.id),
   title: e.data.title,
   client: e.data.client,
   category: e.data.category,
@@ -22,32 +18,23 @@ const items = entries.map((e) => ({
 }))
 
 const filters = [
-  { id: "all", label: t("portfolio.all") },
-  { id: "social", label: lang === "fa" ? "شبکه اجتماعی" : "Social" },
-  { id: "teaser", label: lang === "fa" ? "تیزر" : "Teaser" },
-  { id: "motion", label: lang === "fa" ? "موشن" : "Motion" },
-  { id: "brand", label: lang === "fa" ? "برند" : "Brand" },
+  { id: "all", label: "همه" },
+  { id: "social", label: "شبکهٔ اجتماعی" },
+  { id: "teaser", label: "تیزر" },
+  { id: "motion", label: "موشن" },
+  { id: "brand", label: "فیلم برند" },
 ]
 ---
 
 <section class="section">
   <div class="container-x">
     <SectionHeader
-      eyebrow={t("nav.portfolio")}
-      title={t("portfolio.title")}
-      subtitle={t("portfolio.subtitle")}
+      eyebrow="نمونه‌کارها"
+      title="کارهایی که به آن‌ها افتخار می‌کنیم"
+      subtitle="هر پروژه برای یک هدف مشخص ساخته شده؛ روی هر کدام بزنید و خودتان قضاوت کنید."
     />
-    <p class="reveal mx-auto mt-6 max-w-2xl text-center text-lg text-fg-muted">
-      {t("portfolio.intro")}
-    </p>
-    <div class="mt-14">
-      <PortfolioGallery
-        client:load
-        items={items}
-        filters={filters}
-        lang={lang}
-        viewLabel={t("portfolio.view")}
-      />
+    <div class="reveal mt-14" data-reveal-delay="100">
+      <PortfolioGallery client:load items={items} filters={filters} />
     </div>
   </div>
 </section>

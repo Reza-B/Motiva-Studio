@@ -1,89 +1,53 @@
 ---
-/* =============================================================
-   Pricing — Basic / Pro / Premium cards. The "popular" plan is
-   highlighted with the brand gradient border + badge.
-   Prices are placeholders (“قیمت بر اساس پروژه”) — quotes are custom.
-   ============================================================= */
-import SectionHeader from "./SectionHeader.astro"
-import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
+/* Pricing — three project-based packages. */
+import SectionHeader from "@components/SectionHeader.astro"
 import { pricing } from "@data/content"
-
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
-const tp = useTranslatedPath(lang)
 ---
 
-<section class="section relative" id="pricing">
+<section class="section bg-bg-soft/50">
   <div class="container-x">
     <SectionHeader
-      eyebrow={t("pricing.title")}
-      title={t("pricing.title")}
-      subtitle={t("pricing.subtitle")}
+      eyebrow="پکیج‌ها"
+      title="هر بودجه‌ای، یک راه شروع دارد"
+      subtitle="قیمت نهایی به ابعاد پروژه بستگی دارد؛ بعد از یک جلسهٔ کوتاه، عدد دقیق و شفاف می‌دهیم — بدون هزینهٔ پنهان."
     />
 
-    <div class="mt-14 grid items-stretch gap-6 lg:grid-cols-3">
+    <div class="mt-14 grid gap-6 lg:grid-cols-3">
       {
         pricing.map((plan, i) => (
           <article
             class:list={[
-              "card reveal relative flex flex-col p-8",
+              "reveal relative flex flex-col rounded-[1.75rem] p-8",
               plan.popular
-                ? "border-transparent shadow-glow lg:-translate-y-4"
-                : "card-hover",
+                ? "border-2 border-transparent [background:linear-gradient(rgb(var(--surface)),rgb(var(--surface)))_padding-box,linear-gradient(120deg,#F7861E,#D81E77)_border-box] shadow-glow lg:-translate-y-3"
+                : "card",
             ]}
-            data-reveal-delay={i * 0.08}
+            data-reveal-delay={i * 100}
           >
             {plan.popular && (
-              <>
-                <span
-                  class="pointer-events-none absolute inset-0 -z-10 rounded-[1.75rem] bg-brand-gradient p-px"
-                  aria-hidden="true"
-                >
-                  <span class="block h-full w-full rounded-[1.7rem] bg-surface" />
-                </span>
-                <span class="absolute -top-3 start-1/2 -translate-x-1/2 rounded-full bg-brand-gradient px-4 py-1 text-xs font-bold text-white shadow-glow">
-                  {t("pricing.popular")}
-                </span>
-              </>
-            )}
-
-            <h3 class="text-xl font-extrabold">{plan.name[lang]}</h3>
-            <p class="mt-1 text-sm text-fg-muted">{plan.tagline[lang]}</p>
-
-            <div class="mt-5 flex items-baseline gap-1">
-              <span class="text-2xl font-extrabold text-gradient">
-                {plan.price[lang]}
+              <span class="absolute -top-4 right-8 rounded-full bg-brand-gradient px-4 py-1 text-xs font-bold text-white shadow-glow">
+                محبوب‌ترین انتخاب
               </span>
-            </div>
-
-            <ul class="mt-6 flex-1 space-y-3">
-              {plan.features[lang].map((f) => (
-                <li class="flex items-start gap-3 text-fg-muted">
-                  <svg viewBox="0 0 24 24" class="mt-1 h-4 w-4 flex-none text-brand-pink" fill="none" stroke="currentColor" stroke-width="3">
-                    <path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
+            )}
+            <h3 class="text-2xl font-extrabold">{plan.name}</h3>
+            <p class="mt-1 text-sm text-fg-muted">{plan.tagline}</p>
+            <p class="mt-6 text-lg font-bold text-gradient">{plan.price}</p>
+            <ul class="mt-6 flex-1 space-y-3 border-t border-border pt-6">
+              {plan.features.map((f) => (
+                <li class="flex items-start gap-2.5 leading-7 text-fg-muted">
+                  <svg viewBox="0 0 24 24" class="mt-1.5 h-4 w-4 shrink-0 text-brand-pink" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m5 13 4 4L19 7" />
                   </svg>
-                  <span>{f}</span>
+                  {f}
                 </li>
               ))}
             </ul>
-
-            <a
-              href={tp("/contact")}
-              class:list={[
-                "mt-8 text-center",
-                plan.popular ? "btn-primary" : "btn-ghost",
-              ]}
-            >
-              {t("pricing.cta")}
+            <a href="/contact" class:list={[plan.popular ? "btn-primary" : "btn-ghost", "mt-8 w-full"]}>
+              درخواست مشاورهٔ رایگان
             </a>
           </article>
         ))
       }
     </div>
-
-    {/* Custom-quote note */}
-    <p class="reveal mx-auto mt-8 max-w-2xl text-center text-sm text-fg-muted">
-      {t("pricing.note")}
-    </p>
   </div>
 </section>

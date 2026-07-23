@@ -1,69 +1,65 @@
 ---
-/* About page body — brand story + mission statement. */
-import GradientBlobs from "@components/GradientBlobs.astro"
-import StatsCounter from "@components/StatsCounter.astro"
-import ProcessTimeline from "@components/ProcessTimeline.astro"
-import CTA from "@components/CTA.astro"
-import { getLangFromUrl } from "@i18n/utils"
-
-const lang = getLangFromUrl(Astro.url)
-
-const copy = {
-  fa: {
-    eyebrow: "درباره ما",
-    title: "ما داستان‌ها را به حرکت درمی‌آوریم",
-    lead: "استودیو موتیوا یک استودیوی خلاق ساخت ویدیوی تبلیغاتی است؛ جایی که ایده‌ها به تصویرهایی تبدیل می‌شوند که دیده می‌شوند، به یاد می‌مانند و می‌فروشند.",
-    body: [
-      "موتیوا از دل یک باور ساده متولد شد: هر برند، چه کوچک و چه بزرگ، یک داستان ارزشمند برای گفتن دارد. ما تیمی از کارگردان‌ها، انیمیشن‌سازان و استراتژیست‌های برند هستیم که عاشق تصویریم و می‌دانیم چطور توجه مخاطب را در ثانیه‌ی اول به دست بیاوریم.",
-      "در این سال‌ها کنار کافه‌ها، فروشگاه‌های آنلاین، کلینیک‌ها و آژانس‌های املاک ایستاده‌ایم و دیده‌ایم که یک ویدیوی درست چطور می‌تواند مسیر یک کسب‌وکار را عوض کند. برای همین تمرکزمان فقط روی زیبایی نیست؛ روی نتیجه است.",
-      "از اولین جلسه‌ی ایده‌پردازی تا تحویل نهایی، کنار شما هستیم تا پیام برندتان دقیقاً همان‌طور که می‌خواهید روایت شود — حرفه‌ای، به‌موقع و بدون دردسر.",
-    ],
-    missionLabel: "ماموریت ما",
-    mission: "کمک به کسب‌وکارها برای رشد، با ویدیوهایی که می‌فروشند و ماندگار می‌شوند.",
-  },
-  en: {
-    eyebrow: "About us",
-    title: "We bring stories to motion",
-    lead: "Motiva Studio is a creative advertising-video studio — where ideas become visuals that get seen, remembered, and sell.",
-    body: [
-      "Motiva was born from a simple belief: every brand, big or small, has a story worth telling. We're a team of directors, animators, and brand strategists who love the craft of the image and know how to earn attention in the first second.",
-      "Over the years we've stood beside cafes, online shops, clinics, and real-estate agencies — and we've seen how the right video can change the trajectory of a business. That's why we don't just chase beauty; we chase results.",
-      "From the first ideation session to final delivery, we stay by your side so your brand message is told exactly the way you want it — professional, on time, and stress-free.",
-    ],
-    missionLabel: "Our mission",
-    mission: "To help businesses grow with videos that sell and stay memorable.",
-  },
-}[lang]
+import GradientBlobs from "@components/GradientBlobs.astro";
+import StatsCounter from "@components/StatsCounter.astro";
+import CTA from "@components/CTA.astro";
 ---
 
 <section class="section relative overflow-hidden">
-  <GradientBlobs />
-  <div class="container-x">
-    <div class="reveal max-w-3xl">
-      <span class="eyebrow mb-4">
-        <span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
-        {copy.eyebrow}
-      </span>
-      <h1 class="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-        {copy.title}
-      </h1>
-      <p class="mt-6 text-xl text-fg-muted">{copy.lead}</p>
-      <div class="mt-6 space-y-4 text-lg leading-8 text-fg-muted">
-        {copy.body.map((p) => <p>{p}</p>)}
-      </div>
-    </div>
+	<GradientBlobs />
+	<div class="container-x">
+		<div class="reveal max-w-3xl">
+			<span class="eyebrow mb-4">
+				<span
+					class="h-2 w-2 rounded-full bg-brand-gradient"
+					aria-hidden="true"
+				></span>
+				دربارهٔ ما
+			</span>
+			<h1
+				class="text-4xl leading-[1.35] tracking-tight font-extrabold sm:text-5xl lg:text-6xl"
+			>
+				قصه‌ها را <span class="text-gradient-animated">به حرکت</span> درمی‌آوریم
+			</h1>
+			<p class="mt-6 text-xl leading-9 text-fg-muted">
+				موتیوا یک استودیوی ساخت ویدیوی تبلیغاتی است؛ جایی که ایدهٔ خام، قاب به
+				قاب تبدیل به ویدیویی می‌شود که دیده می‌شود، یادتان می‌ماند و می‌فروشد.
+			</p>
+			<div class="mt-6 space-y-5 text-lg leading-9 text-fg-muted">
+				<p>
+					موتیوا از یک مشاهدهٔ ساده شروع شد: کسب‌وکارهای خوب زیادند، اما
+					ویدیوهایی که حقشان را ادا کند کم‌اند. خیلی از برندها محصول درجه‌یک
+					دارند و تصویری درجه‌سه. ما آمدیم همین فاصله را پر کنیم.
+				</p>
+				<p>
+					تیم ما ترکیبی از کارگردان، تدوینگر، انیمیشن‌ساز و استراتژیست محتواست.
+					کنار کافه‌ها، فروشگاه‌های آنلاین، کلینیک‌ها و استارتاپ‌ها نشسته‌ایم و
+					از نزدیک دیده‌ایم که یک ویدیوی درست، چطور مسیر یک کسب‌وکار را عوض
+					می‌کند. برای همین ذهنمان فقط دنبال قاب زیبا نیست؛ دنبال نتیجه است.
+				</p>
+				<p>
+					از اولین جلسهٔ ایده‌پردازی تا لحظهٔ انتشار، کنار شما می‌مانیم تا پیام
+					برندتان دقیقاً همان‌طور که باید، روایت شود — حرفه‌ای، سر وقت و بدون
+					دردسر.
+				</p>
+			</div>
+		</div>
 
-    {/* Mission statement */}
-    <div class="reveal card mt-12 max-w-3xl p-8">
-      <span class="eyebrow mb-3">
-        <span class="h-2 w-2 rounded-full bg-brand-gradient"></span>
-        {copy.missionLabel}
-      </span>
-      <p class="text-2xl font-bold leading-snug">{copy.mission}</p>
-    </div>
-  </div>
+		{/* Mission */}
+		<div class="card-gradient reveal mt-12 max-w-3xl rounded-[1.75rem] p-8">
+			<span class="eyebrow mb-3">
+				<span
+					class="h-2 w-2 rounded-full bg-brand-gradient"
+					aria-hidden="true"
+				></span>
+				مأموریت ما
+			</span>
+			<p class="text-2xl font-bold leading-snug">
+				کمک به کسب‌وکارها برای رشد، با ویدیوهایی که می‌فروشند و در خاطر
+				می‌مانند.
+			</p>
+		</div>
+	</div>
 </section>
 
 <StatsCounter />
-<ProcessTimeline />
 <CTA />

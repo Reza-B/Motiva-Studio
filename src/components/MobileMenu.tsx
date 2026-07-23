@@ -1,127 +1,106 @@
 /* =============================================================
-   MobileMenu — React island for the animated mobile nav.
-   Uses Framer Motion for the slide/stagger micro-interactions.
-   Keyboard accessible (Esc to close, focus trapped to overlay).
-
-   NOTE: the overlay is rendered through a portal into <body>.
-   The <header> gets `backdrop-blur-xl` once scrolled, and a
-   backdrop-filter establishes a containing block for any
-   position:fixed descendant. Without the portal, the fixed
-   overlay would be clipped to the (short) header box and appear
-   transparent/broken when opened after scrolling.
+   Mobile menu — React island with framer-motion.
+   Full-screen overlay, staggered link reveal, focus-safe.
    ============================================================= */
 import { useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 import { AnimatePresence, motion } from "framer-motion"
-import type { Lang } from "@i18n/ui"
-
-interface Item {
-  href: string
-  label: string
-}
 
 interface Props {
-  lang: Lang
-  items: Item[]
-  labels: { open: string; close: string; cta: string; ctaHref: string }
+  links: { href: string; label: string }[]
 }
 
-export default function MobileMenu({ lang, items, labels }: Props) {
+export default function MobileMenu({ links }: Props) {
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const rtl = lang === "fa"
 
-  // Only portal on the client (document is undefined during SSR).
   useEffect(() => setMounted(true), [])
 
+  // Lock body scroll while the overlay is open.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false)
-    document.addEventListener("keydown", onKey)
-    document.body.style.overflow = open ? "hidden" : ""
+    document.documentElement.style.overflow = open ? "hidden" : ""
     return () => {
-      document.removeEventListener("keydown", onKey)
-      document.body.style.overflow = ""
+      document.documentElement.style.overflow = ""
     }
+  }, [open])
+
+  // Close with Escape.
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false)
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
   }, [open])
 
   const overlay = (
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm lg:hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={() => setOpen(false)}
+          transition={{ duration: 0.25 }}
+          className="fixed inset-0 z-[90] flex flex-col bg-bg/95 backdrop-blur-xl"
+          dir="rtl"
         >
-          <motion.nav
-            dir={rtl ? "rtl" : "ltr"}
-            aria-label="Mobile"
-            className="absolute inset-y-0 end-0 flex w-[82%] max-w-sm flex-col gap-2 border-s border-border bg-bg p-6 shadow-2xl"
-            initial={{ x: rtl ? "-100%" : "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: rtl ? "-100%" : "100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="flex items-center justify-between px-5 py-5">
+            <span className="text-lg font-extrabold">استودیو موتیوا</span>
             <button
               type="button"
+              aria-label="بستن منو"
               onClick={() => setOpen(false)}
-              aria-label={labels.close}
-              className="mb-4 grid h-10 w-10 place-items-center self-end rounded-full border border-border"
+              className="grid h-11 w-11 place-items-center rounded-full border border-border text-fg"
             >
-              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2}>
-                <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M6 6l12 12M18 6 6 18" />
               </svg>
             </button>
+          </div>
 
-            {items.map((item, i) => (
+          <nav className="flex flex-1 flex-col items-center justify-center gap-2" aria-label="منوی موبایل">
+            {links.map((link, i) => (
               <motion.a
-                key={item.href}
-                href={item.href}
-                className="rounded-2xl px-4 py-3 text-lg font-semibold text-fg transition hover:bg-bg-soft hover:text-brand-pink"
-                initial={{ opacity: 0, x: rtl ? -20 : 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.08 + i * 0.05 }}
+                key={link.href}
+                href={link.href}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08 + i * 0.06, duration: 0.35 }}
                 onClick={() => setOpen(false)}
+                className="rounded-2xl px-6 py-3 text-2xl font-bold text-fg transition-colors hover:text-transparent hover:[background:linear-gradient(120deg,#F7861E,#D81E77)] hover:[background-clip:text] hover:[-webkit-background-clip:text]"
               >
-                {item.label}
+                {link.label}
               </motion.a>
             ))}
+          </nav>
 
-            <motion.a
-              href={labels.ctaHref}
-              className="btn-primary mt-4"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.08 + items.length * 0.05 }}
-              onClick={() => setOpen(false)}
-            >
-              {labels.cta}
-            </motion.a>
-          </motion.nav>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="pb-10 text-center text-sm text-fg-muted"
+          >
+            ویدیویی که دیده می‌شود، از اینجا شروع می‌شود.
+          </motion.p>
         </motion.div>
       )}
     </AnimatePresence>
   )
 
   return (
-    <div className="lg:hidden">
+    <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
-        aria-label={labels.open}
+        aria-label="بازکردن منو"
         aria-expanded={open}
-        className="grid h-10 w-10 place-items-center rounded-full border border-border bg-surface/60 backdrop-blur transition hover:border-brand-pink"
+        onClick={() => setOpen(true)}
+        className="grid h-11 w-11 place-items-center rounded-full border border-border text-fg"
       >
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2}>
-          <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
+        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M4 7h16M4 12h16M4 17h10" />
         </svg>
       </button>
-
-      {/* Portal to <body> so the fixed overlay is relative to the
-          viewport, not the backdrop-filtered header. */}
-      {mounted ? createPortal(overlay, document.body) : null}
-    </div>
+      {/* Portal keeps the fixed overlay out of the header's transformed box. */}
+      {mounted && createPortal(overlay, document.body)}
+    </>
   )
 }
