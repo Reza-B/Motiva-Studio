@@ -1,44 +1,35 @@
 ---
 /* =============================================================
-   <SEO /> — all per-page meta in one place:
-   title, description, canonical, Open Graph, Twitter cards,
-   hreflang alternates, and JSON-LD structured data.
+   SEO head tags — canonical, Open Graph, Twitter, JSON-LD.
    ============================================================= */
-import { getAlternateLinks, type Lang } from "@i18n/utils"
 import { SITE_URL } from "@data/site"
+import { organizationSchema, localBusinessSchema } from "@lib/structuredData"
 
 interface Props {
   title: string
   description: string
-  /** Comma-separated target keywords (bilingual). */
   keywords?: string
-  lang: Lang
-  /** Absolute or site-relative OG image. */
-  image?: string
-  /** "website" | "article" */
   type?: "website" | "article"
-  /** Extra JSON-LD objects to inject (Article, BreadcrumbList, etc.). */
-  jsonLd?: Record<string, unknown>[]
+  image?: string
   noindex?: boolean
+  jsonLd?: object[]
 }
 
 const {
   title,
   description,
   keywords,
-  lang,
-  image = "/og-default.jpg",
   type = "website",
-  jsonLd = [],
+  image = "/og-default.jpg",
   noindex = false,
+  jsonLd = [],
 } = Astro.props
 
 const site = SITE_URL.replace(/\/$/, "")
-const pathname = Astro.url.pathname
-const canonical = site + pathname
+const canonical = site + Astro.url.pathname
 const ogImage = image.startsWith("http") ? image : site + image
-const alternates = getAlternateLinks(pathname, site)
-const siteName = lang === "fa" ? "استودیو موتیوا" : "Motiva Studio"
+
+const schemas = [organizationSchema(), localBusinessSchema(), ...jsonLd]
 ---
 
 <title>{title}</title>
@@ -47,34 +38,22 @@ const siteName = lang === "fa" ? "استودیو موتیوا" : "Motiva Studio"
 <link rel="canonical" href={canonical} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-{/* hreflang alternates for bilingual SEO */}
-{
-  alternates.map((alt) => (
-    <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
-  ))
-}
-
 {/* Open Graph */}
 <meta property="og:type" content={type} />
+<meta property="og:site_name" content="استودیو موتیوا" />
+<meta property="og:locale" content="fa_IR" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={ogImage} />
-<meta property="og:locale" content={lang === "fa" ? "fa_IR" : "en_US"} />
-<meta property="og:site_name" content={siteName} />
 
-{/* Twitter cards */}
+{/* Twitter */}
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
 
-{/* JSON-LD structured data */}
-{
-  jsonLd.map((obj) => (
-    <script
-      type="application/ld+json"
-      set:html={JSON.stringify(obj)}
-    />
-  ))
-}
+{/* JSON-LD */}
+{schemas.map((schema) => (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+))}

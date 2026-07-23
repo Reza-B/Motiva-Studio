@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro"
 import AboutContent from "@components/pages/AboutContent.astro"
-import { getLangFromUrl, useTranslations } from "@i18n/utils"
-const t = useTranslations(getLangFromUrl(Astro.url))
 ---
 
-<BaseLayout title={t("seo.about.title")} description={t("seo.about.desc")} keywords={t("seo.about.keywords")}>
+<BaseLayout
+  title="دربارهٔ ما — استودیو موتیوا"
+  description="با تیم استودیو موتیوا آشنا شوید؛ کارگردان‌ها، تدوینگرها و انیمیشن‌سازهایی که قصهٔ برند شما را به ویدیویی تبدیل می‌کنند که می‌فروشد."
+  keywords="استودیو موتیوا, درباره موتیوا, تیم ساخت ویدیو, استودیو ویدیوسازی"
+>
   <AboutContent />
 </BaseLayout>

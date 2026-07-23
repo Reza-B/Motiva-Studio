@@ -1,292 +1,232 @@
 /* =============================================================
-   Bilingual structured content for the marketing sections
-   (services, value props, process, pricing, testimonials).
-   Kept in code (not a CMS) so it ships as static data.
-   Each entry carries `fa` (primary) and `en` fields.
-
-   Voice: warm, confident, modern, punchy — benefit-driven.
-   Pricing uses placeholders (“قیمت بر اساس پروژه”), never invented numbers.
+   محتوای ساختاریافتهٔ بخش‌های بازاریابی سایت (فارسی).
+   خدمات، مزیت‌ها، مراحل کار، پکیج‌ها و نظر مشتریان.
+   همه‌چیز استاتیک است و بدون CMS منتشر می‌شود.
    ============================================================= */
-
-import type { Lang } from "@i18n/utils"
-
-export type Localized<T = string> = Record<Lang, T>
 
 export interface Service {
   id: string
   icon: string // inline SVG path data (24x24 viewBox)
-  title: Localized
-  description: Localized
-  features: Localized<string[]>
+  title: string
+  description: string
+  features: string[]
 }
 
 export const services: Service[] = [
   {
     id: "social",
     icon: "M4 4h16v12H5.17L4 17.17V4m0-2a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H4z",
-    title: { fa: "ویدیوی شبکه‌های اجتماعی", en: "Social Media Videos" },
-    description: {
-      fa: "ریلز، استوری و ویدیوی کوتاهی که اسکرول را متوقف می‌کند. محتوایی می‌سازیم که دیده می‌شود، ذخیره می‌شود و به فروش می‌رسد. مناسب کافه، فروشگاه آنلاین و کلینیک.",
-      en: "Reels, Stories, and shorts that stop the scroll. We craft content that gets seen, saved, and converts — perfect for cafes, online shops, and clinics.",
-    },
-    features: {
-      fa: ["ریلز و استوری", "زیرنویس حرفه‌ای", "قلاب در ثانیه‌ی اول", "بهینه‌سازی برای هر پلتفرم"],
-      en: ["Reels & Stories", "Pro captions", "First-second hook", "Per-platform optimization"],
-    },
+    title: "ویدیوی شبکه‌های اجتماعی",
+    description:
+      "ریلز و استوری‌هایی که وسط اسکرول، شست مخاطب را متوقف می‌کنند. از ایده و سناریو تا تدوین و زیرنویس، همه را طوری می‌چینیم که مخاطب تا آخر بماند و بعدش سر از پیج شما دربیاورد.",
+    features: [
+      "ریلز و استوری",
+      "زیرنویس و کپشن حرفه‌ای",
+      "قلاب در سه ثانیهٔ اول",
+      "خروجی مخصوص هر پلتفرم",
+    ],
   },
   {
     id: "teaser",
     icon: "M8 5v14l11-7z",
-    title: { fa: "تیزر تبلیغاتی محصول", en: "Product Teasers" },
-    description: {
-      fa: "تیزرهای محصول سینمایی که ارزش محصول شما را در چند ثانیه نشان می‌دهند. تصویر درجه‌یک و تدوین ریتمیک که مشتری را به خرید ترغیب می‌کند.",
-      en: "Cinematic product teasers that show your value in seconds. Premium visuals and rhythmic editing that spark demand and move people to buy.",
-    },
-    features: {
-      fa: ["فیلمبرداری محصول", "نورپردازی استودیویی", "تدوین ریتمیک", "نسخه‌ی عمودی و افقی"],
-      en: ["Product cinematography", "Studio lighting", "Rhythmic editing", "Vertical & landscape cuts"],
-    },
+    title: "تیزر تبلیغاتی محصول",
+    description:
+      "محصول شما را همان‌طور نشان می‌دهیم که دوست دارید مشتری ببیند: با نور درست، قاب درست و ریتمی که تا ثانیهٔ آخر نگه می‌دارد. تیزری که بعد از تماشا، فقط یک سؤال می‌ماند: «از کجا بخرم؟»",
+    features: [
+      "فیلم‌برداری محصول",
+      "نورپردازی استودیویی",
+      "تدوین ریتمیک",
+      "نسخهٔ عمودی و افقی",
+    ],
   },
   {
     id: "motion",
     icon: "M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
-    title: { fa: "موشن گرافیک", en: "Motion Graphics" },
-    description: {
-      fa: "انیمیشن و موشن گرافیک حرفه‌ای که ایده‌های پیچیده را ساده می‌کند. برای توضیح خدمات، معرفی اپلیکیشن یا جان دادن به لوگوی برند.",
-      en: "Professional animation that makes complex ideas simple. Ideal for explaining services, launching apps, or bringing your logo to life.",
-    },
-    features: {
-      fa: ["انیمیشن دوبعدی و سه‌بعدی", "اینفوگرافیک متحرک", "لوگو موشن", "طراحی صدا"],
-      en: ["2D & 3D animation", "Animated infographics", "Logo motion", "Sound design"],
-    },
+    title: "موشن گرافیک",
+    description:
+      "بعضی حرف‌ها با دوربین گفته نمی‌شوند. سرویس پیچیده، اپلیکیشن تازه یا آمار خشک را با انیمیشن به زبانی ساده و تماشایی ترجمه می‌کنیم؛ طوری که مخاطب بدون خستگی تا آخر ببیند.",
+    features: [
+      "انیمیشن دوبعدی و سه‌بعدی",
+      "اینفوگرافیک متحرک",
+      "لوگو موشن",
+      "طراحی صدا",
+    ],
   },
   {
     id: "brand",
     icon: "M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6z",
-    title: { fa: "فیلم برند", en: "Brand Videos" },
-    description: {
-      fa: "داستان برند شما را در قالب یک فیلم احساسی و ماندگار روایت می‌کنیم. فیلمی که اعتماد می‌سازد و برند شما را متمایز می‌کند.",
-      en: "We tell your brand story through an emotional, memorable film — the kind that builds trust and sets you apart from everyone else.",
-    },
-    features: {
-      fa: ["فیلمنامه و کارگردانی", "تصویربرداری سینمایی", "موسیقی اختصاصی", "اصلاح رنگ حرفه‌ای"],
-      en: ["Script & direction", "Cinematic shooting", "Original score", "Pro color grading"],
-    },
+    title: "فیلم برند",
+    description:
+      "هر برندی یک «چرا» دارد؛ ما آن را پیدا می‌کنیم و به فیلمی تبدیلش می‌کنیم که در ذهن می‌ماند. فیلم برند خوب تبلیغ نیست، دعوت است — دعوتی که مخاطب را طرفدار می‌کند.",
+    features: [
+      "فیلمنامه و کارگردانی",
+      "تصویربرداری سینمایی",
+      "موسیقی اختصاصی",
+      "اصلاح رنگ حرفه‌ای",
+    ],
   },
 ]
 
-/* ---- Why Motiva / value props (icon title + one sentence) ---- */
+/* ---- چرا موتیوا / مزیت‌ها ---- */
 export interface ValueProp {
   icon: string
-  title: Localized
-  description: Localized
+  title: string
+  description: string
 }
 
 export const valueProps: ValueProp[] = [
   {
     icon: "M13 2 3 14h7l-1 8 10-12h-7z",
-    title: { fa: "تحویل سریع", en: "Fast Delivery" },
-    description: {
-      fa: "زمان‌بندی شفاف و تحویل سروقت؛ بدون معطلی و بدون دردسر.",
-      en: "Clear timelines and on-time delivery — no delays, no headaches.",
-    },
+    title: "تحویل سر وقت",
+    description: "تاریخ تحویل برای ما قول است، نه حدود. از روز اول تقویم پروژه دست‌تان است.",
   },
   {
     icon: "M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z",
-    title: { fa: "خلاقیت اسکرول‌ایست", en: "Scroll-Stopping Creativity" },
-    description: {
-      fa: "ایده‌هایی که در ثانیه‌ی اول مخاطب را میخکوب می‌کند.",
-      en: "Ideas that grab attention in the very first second.",
-    },
+    title: "ایده‌ای که اسکرول را نگه می‌دارد",
+    description: "قبل از دوربین، سراغ ایده می‌رویم؛ چون قشنگ‌ترین قاب هم بدون قلاب دیده نمی‌شود.",
   },
   {
     icon: "M3 3v18h18M7 15l4-4 3 3 5-6",
-    title: { fa: "داده‌محور", en: "Data-Driven" },
-    description: {
-      fa: "تصمیم‌ها براساس عدد، ترند و رفتار مخاطب گرفته می‌شود.",
-      en: "Decisions guided by numbers, trends, and real audience behavior.",
-    },
+    title: "تصمیم با عدد، نه سلیقه",
+    description: "بازدید، ماندگاری و نرخ تبدیل را دنبال می‌کنیم و نسخهٔ بعدی را از روی داده می‌سازیم.",
   },
   {
     icon: "M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
-    title: { fa: "سرویس کامل", en: "Full-Service" },
-    description: {
-      fa: "از ایده تا اکران؛ همه‌ی مراحل را یکجا برعهده می‌گیریم.",
-      en: "From idea to launch — we handle every stage under one roof.",
-    },
+    title: "همه‌چیز زیر یک سقف",
+    description: "ایده، سناریو، ضبط، تدوین و انتشار؛ لازم نیست با پنج تیم مختلف هماهنگ کنید.",
   },
   {
     icon: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm0 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4z",
-    title: { fa: "آشنا با بازار ایران", en: "Built for Your Market" },
-    description: {
-      fa: "محتوایی متناسب با فرهنگ و مخاطب بازار ایران و فراتر از آن.",
-      en: "Content tuned to Iran's audience and culture — and beyond.",
-    },
+    title: "آشنا با مخاطب ایرانی",
+    description: "می‌دانیم مخاطب ایرانی به چه می‌خندد، به چه اعتماد می‌کند و کجا اسکرول را نگه می‌دارد.",
   },
   {
     icon: "M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5l-8-3zm-1 13-3-3 1.4-1.4L11 12.2l4.6-4.6L17 9z",
-    title: { fa: "شفاف و بدون استرس", en: "Transparent & Stress-Free" },
-    description: {
-      fa: "قیمت و مراحل کار از اول روشن است؛ بدون هزینه‌ی پنهان.",
-      en: "Pricing and steps are clear from day one — no hidden costs.",
-    },
+    title: "بدون سورپرایز مالی",
+    description: "قیمت و مراحل کار از جلسهٔ اول شفاف است؛ هزینهٔ پنهان نداریم، تعارف هم.",
   },
 ]
 
 export interface ProcessStep {
   step: string
-  title: Localized
-  description: Localized
+  title: string
+  description: string
 }
 
 export const processSteps: ProcessStep[] = [
   {
-    step: "01",
-    title: { fa: "بریف و کشف", en: "Brief & Discovery" },
-    description: {
-      fa: "هدف، مخاطب و پیام برند شما را می‌فهمیم و مسیر پروژه را مشخص می‌کنیم.",
-      en: "We learn your goal, audience, and message, then map out the project.",
-    },
+    step: "۱",
+    title: "گفت‌وگو و کشف",
+    description:
+      "اول می‌نشینیم پای حرف شما. هدف، مخاطب و بودجه که روشن شد، مسیر پروژه را با هم می‌چینیم.",
   },
   {
-    step: "02",
-    title: { fa: "فیلمنامه و استوری‌بورد", en: "Script & Storyboard" },
-    description: {
-      fa: "کانسپت خلاق، فیلمنامه و استوری‌بورد را می‌سازیم تا قبل از ضبط، نتیجه روشن باشد.",
-      en: "We build the creative concept, script, and storyboard so the result is clear before we shoot.",
-    },
+    step: "۲",
+    title: "ایده و سناریو",
+    description:
+      "ایدهٔ اصلی، فیلمنامه و استوری‌بورد را می‌سازیم تا قبل از روشن‌شدن دوربین، دقیقاً بدانید چه چیزی تحویل می‌گیرید.",
   },
   {
-    step: "03",
-    title: { fa: "تولید", en: "Production" },
-    description: {
-      fa: "فیلمبرداری حرفه‌ای با تجهیزات روز و تیم متخصص.",
-      en: "Professional shooting with modern gear and an expert crew.",
-    },
+    step: "۳",
+    title: "ضبط",
+    description:
+      "روز فیلم‌برداری همه‌چیز طبق برنامه پیش می‌رود؛ تجهیزات حرفه‌ای، تیم هماهنگ و بدون بی‌نظمی.",
   },
   {
-    step: "04",
-    title: { fa: "تدوین", en: "Editing" },
-    description: {
-      fa: "تدوین، اصلاح رنگ، موشن گرافیک و طراحی صدا برای خروجی بی‌نقص.",
-      en: "Editing, color grading, motion graphics, and sound design for a flawless cut.",
-    },
+    step: "۴",
+    title: "تدوین و جادوی پس از ضبط",
+    description:
+      "تدوین، اصلاح رنگ، موشن و صداگذاری؛ همان مرحله‌ای که راش‌های خام تبدیل به ویدیویی می‌شوند که دلتان می‌خواهد بارها ببینید.",
   },
   {
-    step: "05",
-    title: { fa: "تحویل", en: "Delivery" },
-    description: {
-      fa: "خروجی در همه‌ی فرمت‌های دلخواه، آماده‌ی انتشار در هر پلتفرم.",
-      en: "Final files in every format you need, ready to publish on any platform.",
-    },
+    step: "۵",
+    title: "تحویل و انتشار",
+    description:
+      "خروجی نهایی را در همهٔ فرمت‌های لازم می‌گیرید؛ آمادهٔ انتشار در اینستاگرام، سایت یا هر جای دیگر.",
   },
 ]
 
 export interface PricingPlan {
   id: string
-  name: Localized
-  tagline: Localized
-  price: Localized
+  name: string
+  tagline: string
+  price: string
   popular?: boolean
-  features: Localized<string[]>
+  features: string[]
 }
 
 export const pricing: PricingPlan[] = [
   {
     id: "basic",
-    name: { fa: "پایه", en: "Basic" },
-    tagline: { fa: "شروعی حرفه‌ای برای دیده شدن", en: "A pro start to get seen" },
-    price: { fa: "قیمت بر اساس پروژه", en: "Custom quote" },
-    features: {
-      fa: ["یک ویدیوی کوتاه (تا ۳۰ ثانیه)", "تدوین و زیرنویس", "۲ بازنگری", "خروجی ۴ک"],
-      en: ["One short video (up to 30s)", "Editing & captions", "2 revisions", "4K delivery"],
-    },
+    name: "پایه",
+    tagline: "برای شروعی که حرفه‌ای دیده شود",
+    price: "قیمت بر اساس پروژه",
+    features: [
+      "یک ویدیوی کوتاه (تا ۳۰ ثانیه)",
+      "تدوین و زیرنویس",
+      "۲ مرحله بازنگری",
+      "خروجی 4K",
+    ],
   },
   {
     id: "pro",
-    name: { fa: "حرفه‌ای", en: "Pro" },
-    tagline: { fa: "بهترین انتخاب برای رشد", en: "The best choice for growth" },
-    price: { fa: "قیمت بر اساس پروژه", en: "Custom quote" },
+    name: "حرفه‌ای",
+    tagline: "انتخاب اکثر مشتری‌های ما",
+    price: "قیمت بر اساس پروژه",
     popular: true,
-    features: {
-      fa: [
-        "تا ۳ ویدیو",
-        "موشن گرافیک و زیرنویس",
-        "اصلاح رنگ حرفه‌ای",
-        "۵ بازنگری",
-        "موسیقی دارای لایسنس",
-      ],
-      en: [
-        "Up to 3 videos",
-        "Motion graphics & captions",
-        "Pro color grading",
-        "5 revisions",
-        "Licensed music",
-      ],
-    },
+    features: [
+      "تا ۳ ویدیو",
+      "موشن گرافیک و زیرنویس",
+      "اصلاح رنگ حرفه‌ای",
+      "۵ مرحله بازنگری",
+      "موسیقی دارای لایسنس",
+    ],
   },
   {
     id: "premium",
-    name: { fa: "پرمیوم", en: "Premium" },
-    tagline: { fa: "کمپین کامل و اختصاصی", en: "A full, bespoke campaign" },
-    price: { fa: "قیمت بر اساس پروژه", en: "Custom quote" },
-    features: {
-      fa: [
-        "کمپین ویدیویی کامل",
-        "کارگردانی و فیلمنامه",
-        "تیم اختصاصی",
-        "بازنگری نامحدود",
-        "مدیر پروژه‌ی اختصاصی",
-      ],
-      en: [
-        "Full video campaign",
-        "Direction & scriptwriting",
-        "Dedicated crew",
-        "Unlimited revisions",
-        "Dedicated project manager",
-      ],
-    },
+    name: "پرمیوم",
+    tagline: "یک کمپین کامل، از صفر تا انتشار",
+    price: "قیمت بر اساس پروژه",
+    features: [
+      "کمپین ویدیویی کامل",
+      "کارگردانی و فیلمنامه",
+      "تیم اختصاصی",
+      "بازنگری نامحدود",
+      "مدیر پروژهٔ اختصاصی",
+    ],
   },
 ]
 
 export interface Testimonial {
-  name: Localized
-  role: Localized
-  quote: Localized
+  name: string
+  role: string
+  quote: string
 }
 
-/* NOTE: Placeholder testimonials for the template — replace with real ones. */
+/* ⚠️ نمونهٔ نمایشی — با نظر مشتریان واقعی خودتان جایگزین کنید. */
 export const testimonials: Testimonial[] = [
   {
-    name: { fa: "سارا محمدی", en: "Sara Mohammadi" },
-    role: { fa: "مدیر کافه روما", en: "Owner, Roma Cafe" },
-    quote: {
-      fa: "ریلزی که موتیوا ساخت، در یک هفته فروش آخر هفته‌مان را دو برابر کرد.",
-      en: "The Reels Motiva made doubled our weekend sales in just one week.",
-    },
+    name: "سارا محمدی",
+    role: "مدیر کافه روما",
+    quote:
+      "راستش اولش فکر می‌کردم ریلز فقط برای پیج‌های بزرگ جواب می‌دهد. ریلزی که موتیوا ساخت، آخر همان هفته صف جلوی کافه را برگرداند.",
   },
   {
-    name: { fa: "علی رضایی", en: "Ali Rezaei" },
-    role: { fa: "بنیانگذار فروشگاه آنلاین زرین", en: "Founder, Zarrin Online Shop" },
-    quote: {
-      fa: "تیزر محصولی که ساختند دقیقاً همان حسی بود که می‌خواستیم؛ حرفه‌ای و تأثیرگذار.",
-      en: "The product teaser they made was exactly the feeling we wanted — polished and persuasive.",
-    },
+    name: "علی رضایی",
+    role: "بنیان‌گذار فروشگاه آنلاین زرین",
+    quote:
+      "تیزر محصول را که دیدم، اولین جمله‌ام این بود: «این همان چیزی است که توی ذهنم بود.» کم پیش می‌آید تیمی حرف دلت را همان بار اول بفهمد.",
   },
   {
-    name: { fa: "دکتر مریم کریمی", en: "Dr. Maryam Karimi" },
-    role: { fa: "مدیر کلینیک پوست و زیبایی آرا", en: "Director, Ara Skin Clinic" },
-    quote: {
-      fa: "فرآیند کاملاً حرفه‌ای بود و تعداد پیام‌های رزرو از اینستاگرام محسوس بالا رفت.",
-      en: "The process was fully professional and our Instagram booking DMs noticeably went up.",
-    },
+    name: "دکتر مریم کریمی",
+    role: "مدیر کلینیک پوست و زیبایی آرا",
+    quote:
+      "از جلسهٔ اول تا تحویل، همه‌چیز زمان‌بندی داشت. بعد از انتشار ویدیوها، دایرکت‌های رزرو به‌وضوح بیشتر شد؛ عددش را خودمان هم باور نمی‌کردیم.",
   },
   {
-    name: { fa: "رضا اسدی", en: "Reza Asadi" },
-    role: { fa: "مشاور املاک، آژانس خانه", en: "Realtor, Khaneh Agency" },
-    quote: {
-      fa: "ویدیوی تور مجازی ملک‌ها باعث شد مشتری‌های جدی‌تری داشته باشیم و زمان فروش کوتاه‌تر شود.",
-      en: "The virtual-tour videos brought in more serious buyers and shortened our closing time.",
-    },
+    name: "رضا اسدی",
+    role: "مشاور املاک، آژانس خانه",
+    quote:
+      "ویدیوی تور مجازی باعث شد مشتری قبل از بازدید حضوری، عاشق ملک شود. زمان فروش تقریباً نصف شد.",
   },
 ]

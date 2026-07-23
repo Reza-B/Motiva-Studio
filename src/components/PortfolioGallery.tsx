@@ -1,21 +1,15 @@
 /* =============================================================
-   PortfolioGallery — React island for the filterable video grid
-   with hover-to-play previews and a lightbox.
-   - Pinterest-style masonry layout (CSS columns) with varied
-     card heights for a lively, image-forward feel.
-   - Framer Motion powers the filter fade + lightbox transitions.
-   - Hover plays a muted preview clip; leaving pauses & resets.
-   - Click opens an accessible lightbox (Esc / backdrop to close).
-   Data is passed in from Astro (already localized).
+   Portfolio gallery — filterable grid + video lightbox.
+   framer-motion layout animations make filtering feel alive.
    ============================================================= */
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 
 export interface PortfolioItem {
   slug: string
   title: string
   client?: string
-  category: "social" | "teaser" | "motion" | "brand"
+  category: string
   thumbnail: string
   thumbnailAlt: string
   previewVideo?: string
@@ -25,215 +19,149 @@ export interface PortfolioItem {
 interface Props {
   items: PortfolioItem[]
   filters: { id: string; label: string }[]
-  lang: "fa" | "en"
-  viewLabel: string
 }
 
-/* Varied aspect ratios cycled by index to create the masonry rhythm. */
-const ASPECTS = [
-  "aspect-[4/5]",
-  "aspect-square",
-  "aspect-[3/4]",
-  "aspect-video",
-  "aspect-[4/5]",
-  "aspect-[3/4]",
-]
-
-function VideoCard({
-  item,
-  onOpen,
-  viewLabel,
-  aspect,
-}: {
-  item: PortfolioItem
-  onOpen: () => void
-  viewLabel: string
-  aspect: string
-}) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  const play = () => {
-    const v = videoRef.current
-    if (v) void v.play().catch(() => {})
-  }
-  const stop = () => {
-    const v = videoRef.current
-    if (v) {
-      v.pause()
-      v.currentTime = 0
-    }
-  }
-
-  return (
-    <motion.button
-      type="button"
-      onClick={onOpen}
-      onMouseEnter={play}
-      onMouseLeave={stop}
-      onFocus={play}
-      onBlur={stop}
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.3 }}
-      className={
-        "masonry-item group relative mb-5 block w-full overflow-hidden rounded-3xl border border-border bg-surface text-start shadow-soft transition-shadow duration-300 hover:shadow-glow " +
-        aspect
-      }
-      aria-label={`${viewLabel}: ${item.title}`}
-    >
-      <img
-        src={item.thumbnail}
-        alt={item.thumbnailAlt}
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
-      />
-      {item.previewVideo && (
-        <video
-          ref={videoRef}
-          src={item.previewVideo}
-          muted
-          loop
-          playsInline
-          preload="none"
-          className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5">
-        <div>
-          {item.client && (
-            <p className="text-xs font-medium text-white/70">{item.client}</p>
-          )}
-          <h3 className="text-lg font-bold text-white">{item.title}</h3>
-        </div>
-        <span className="grid h-11 w-11 flex-none place-items-center rounded-full bg-brand-gradient text-white shadow-glow transition group-hover:scale-110">
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </span>
-      </div>
-    </motion.button>
-  )
+const categoryLabel: Record<string, string> = {
+  social: "شبکهٔ اجتماعی",
+  teaser: "تیزر",
+  motion: "موشن گرافیک",
+  brand: "فیلم برند",
 }
 
-function Lightbox({
-  item,
-  onClose,
-}: {
-  item: PortfolioItem
-  onClose: () => void
-}) {
+export default function PortfolioGallery({ items, filters }: Props) {
+  const [active, setActive] = useState("all")
+  const [lightbox, setLightbox] = useState<PortfolioItem | null>(null)
+
+  const visible = active === "all" ? items : items.filter((i) => i.category === active)
+
+  // Close lightbox with Escape + lock scroll while open.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose()
-    document.addEventListener("keydown", onKey)
-    document.body.style.overflow = "hidden"
+    if (!lightbox) return
+    document.documentElement.style.overflow = "hidden"
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setLightbox(null)
+    window.addEventListener("keydown", onKey)
     return () => {
-      document.removeEventListener("keydown", onKey)
-      document.body.style.overflow = ""
+      document.documentElement.style.overflow = ""
+      window.removeEventListener("keydown", onKey)
     }
-  }, [onClose])
-
-  const isEmbed = /youtube|vimeo/.test(item.videoUrl)
+  }, [lightbox])
 
   return (
-    <motion.div
-      className="fixed inset-0 z-[80] grid place-items-center bg-black/85 p-4 backdrop-blur"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label={item.title}
-    >
-      <motion.div
-        className="relative aspect-video w-full max-w-5xl overflow-hidden rounded-2xl bg-black shadow-2xl"
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {isEmbed ? (
-          <iframe
-            src={item.videoUrl}
-            title={item.title}
-            className="h-full w-full"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-          />
-        ) : (
-          <video src={item.videoUrl} className="h-full w-full" controls autoPlay playsInline />
-        )}
-      </motion.div>
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="Close"
-        className="absolute end-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20"
-      >
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2}>
-          <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-        </svg>
-      </button>
-    </motion.div>
-  )
-}
-
-export default function PortfolioGallery({ items, filters, viewLabel }: Props) {
-  const [active, setActive] = useState<string>("all")
-  const [selected, setSelected] = useState<PortfolioItem | null>(null)
-
-  const visible =
-    active === "all" ? items : items.filter((i) => i.category === active)
-
-  return (
-    <div>
-      {/* Filter chips */}
-      <div className="mb-10 flex flex-wrap justify-center gap-2">
+    <div dir="rtl">
+      {/* Filters */}
+      <div className="flex flex-wrap justify-center gap-2.5" role="tablist" aria-label="فیلتر نمونه‌کارها">
         {filters.map((f) => (
           <button
             key={f.id}
             type="button"
+            role="tab"
+            aria-selected={active === f.id}
             onClick={() => setActive(f.id)}
-            aria-pressed={active === f.id}
             className={
-              "relative rounded-full px-5 py-2 text-sm font-medium transition " +
-              (active === f.id
-                ? "text-white"
-                : "border border-border text-fg-muted hover:text-fg")
+              active === f.id
+                ? "rounded-full bg-[linear-gradient(120deg,#F7861E,#D81E77)] px-5 py-2.5 text-sm font-bold text-white shadow-glow transition"
+                : "rounded-full border border-border bg-surface px-5 py-2.5 text-sm font-medium text-fg-muted transition hover:border-brand-pink hover:text-fg"
             }
           >
-            {active === f.id && (
-              <motion.span
-                layoutId="filter-pill"
-                className="absolute inset-0 -z-10 rounded-full bg-brand-gradient"
-                transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              />
-            )}
             {f.label}
           </button>
         ))}
       </div>
 
-      {/* Masonry (CSS columns) */}
-      <div className="masonry columns-1 sm:columns-2 lg:columns-3">
+      {/* Grid */}
+      <motion.ul layout className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <AnimatePresence mode="popLayout">
-          {visible.map((item, i) => (
-            <VideoCard
+          {visible.map((item) => (
+            <motion.li
               key={item.slug}
-              item={item}
-              aspect={ASPECTS[i % ASPECTS.length]}
-              viewLabel={viewLabel}
-              onOpen={() => setSelected(item)}
-            />
+              layout
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.92 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <button
+                type="button"
+                onClick={() => setLightbox(item)}
+                className="group relative block w-full overflow-hidden rounded-[1.75rem] border border-border text-right"
+                aria-label={`پخش ویدیوی ${item.title}`}
+              >
+                <img
+                  src={item.thumbnail}
+                  alt={item.thumbnailAlt}
+                  loading="lazy"
+                  className="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+                {/* Gradient scrim */}
+                <span className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" aria-hidden="true" />
+
+                {/* Play badge */}
+                <span className="absolute left-4 top-4 grid h-12 w-12 place-items-center rounded-full bg-white/15 text-white backdrop-blur transition duration-300 group-hover:bg-[linear-gradient(120deg,#F7861E,#D81E77)] group-hover:shadow-glow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                </span>
+
+                <span className="absolute inset-x-0 bottom-0 p-5">
+                  <span className="block text-xs font-medium text-white/70">
+                    {categoryLabel[item.category] ?? item.category}
+                    {item.client ? ` · ${item.client}` : ""}
+                  </span>
+                  <span className="mt-1 block text-lg font-extrabold text-white">{item.title}</span>
+                </span>
+              </button>
+            </motion.li>
           ))}
         </AnimatePresence>
-      </div>
+      </motion.ul>
 
+      {visible.length === 0 && (
+        <p className="mt-12 text-center text-fg-muted">در این دسته هنوز نمونه‌ای منتشر نکرده‌ایم.</p>
+      )}
+
+      {/* Lightbox */}
       <AnimatePresence>
-        {selected && (
-          <Lightbox item={selected} onClose={() => setSelected(null)} />
+        {lightbox && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[95] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
+            onClick={() => setLightbox(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={lightbox.title}
+          >
+            <motion.div
+              initial={{ scale: 0.92, y: 24 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.92, y: 24 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full max-w-4xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mb-3 flex items-center justify-between text-white">
+                <p className="font-bold">{lightbox.title}</p>
+                <button
+                  type="button"
+                  onClick={() => setLightbox(null)}
+                  aria-label="بستن ویدیو"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-white/25 transition hover:bg-white/10"
+                >
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M6 6l12 12M18 6 6 18" />
+                  </svg>
+                </button>
+              </div>
+              <div className="aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black shadow-soft">
+                <iframe
+                  src={lightbox.videoUrl + "?autoplay=1"}
+                  title={lightbox.title}
+                  className="h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

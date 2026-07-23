@@ -1,16 +1,14 @@
 ---
 /* =============================================================
-   BlogPost layout — wraps a single MDX article.
-   Premium editorial design: soft brand glow, optimized cover,
-   author + meta row, share buttons, richly-styled & RTL-safe
-   prose, tag list, author card, plus Article + BreadcrumbList
-   JSON-LD for SEO.
+   Blog post layout — editorial reading experience:
+   hero cover, meta bar, comfy prose measure, share links,
+   and "more posts" at the end.
    ============================================================= */
 import { Image } from "astro:assets"
 import type { CollectionEntry } from "astro:content"
-import BaseLayout from "./BaseLayout.astro"
-import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
-import { articleSchema, breadcrumbSchema } from "@lib/structuredData"
+import BaseLayout from "@layouts/BaseLayout.astro"
+import CTA from "@components/CTA.astro"
+import { getBlogPosts, entrySlug, readingMinutes } from "@lib/blog"
 import { SITE_URL } from "@data/site"
 
 interface Props {
@@ -19,181 +17,143 @@ interface Props {
 }
 
 const { entry, readingTime } = Astro.props
-const { data } = entry
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
-const tp = useTranslatedPath(lang)
+const { title, description, pubDate, updatedDate, author, cover, coverAlt, category, tags } = entry.data
 
-const site = SITE_URL.replace(/\/$/, "")
-const url = site + Astro.url.pathname
-const dateFmt = new Intl.DateTimeFormat(lang === "fa" ? "fa-IR" : "en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-})
+const dateFmt = new Intl.DateTimeFormat("fa-IR", { year: "numeric", month: "long", day: "numeric" })
+const postUrl = `${SITE_URL}/blog/${entrySlug(entry.id)}`
 
-const authorInitial = (data.author ?? "M").trim().charAt(0)
+// Share URLs (built via concatenation on purpose — keeps template clean).
+const shareQuery = `?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(title)}`
+const telegramShare = "https://t.me" + "/share/url" + shareQuery
+const twitterShare = "https://twitter.com" + "/intent/tweet" + shareQuery
 
-// Static social share links (open in a new tab).
-const enc = encodeURIComponent
-const shareX =
-  "https://twitter.com/intent/tweet?text=" + enc(data.title) + "&url=" + enc(url)
-const shareLinkedIn =
-  "https://www.linkedin.com/sharing/share-offsite/?url=" + enc(url)
-const shareTelegram =
-  "https://t.me/share/url?url=" + enc(url) + "&text=" + enc(data.title)
-
-const jsonLd = [
-  articleSchema({
-    title: data.title,
-    description: data.description,
-    url,
-    author: data.author,
-    pubDate: data.pubDate,
-    updatedDate: data.updatedDate,
-  }),
-  breadcrumbSchema([
-    { name: t("nav.home"), url: site + tp("/") },
-    { name: t("blog.title"), url: site + tp("/blog") },
-    { name: data.title, url },
-  ]),
-]
-
-const prose = [
-  "prose prose-lg max-w-none dark:prose-invert",
-  "prose-headings:font-extrabold prose-headings:tracking-tight prose-headings:text-fg",
-  "prose-h2:mt-14 prose-h2:mb-5 prose-h2:text-2xl md:prose-h2:text-3xl prose-h2:scroll-mt-28",
-  "prose-h3:mt-9 prose-h3:mb-3 prose-h3:text-xl",
-  "prose-p:text-fg-muted prose-p:leading-8",
-  "prose-strong:text-fg prose-strong:font-bold",
-  "prose-a:font-medium prose-a:text-brand-pink prose-a:no-underline hover:prose-a:underline prose-a:underline-offset-4",
-  "prose-ul:my-6 prose-ol:my-6 prose-li:my-1 prose-li:text-fg-muted [&_li::marker]:text-brand-pink",
-  "prose-img:rounded-2xl prose-img:shadow-soft prose-img:ring-1 prose-img:ring-border",
-  "prose-hr:my-12 prose-hr:border-border",
-  "prose-code:text-brand-pink prose-code:font-medium prose-code:before:content-[''] prose-code:after:content-['']",
-  "prose-pre:rounded-2xl prose-pre:border prose-pre:border-white/10 prose-pre:bg-[#0f1020] prose-pre:text-gray-100 prose-pre:shadow-soft",
-  "prose-table:overflow-hidden prose-th:text-fg prose-th:font-bold prose-td:text-fg-muted",
-  "[&_blockquote]:not-italic [&_blockquote]:rounded-2xl [&_blockquote]:bg-bg-soft [&_blockquote]:px-6 [&_blockquote]:py-1",
-  "[&_blockquote]:!border-brand-pink ltr:[&_blockquote]:!border-l-4 ltr:[&_blockquote]:!border-r-0 rtl:[&_blockquote]:!border-r-4 rtl:[&_blockquote]:!border-l-0",
-  "[&_blockquote_p]:text-fg [&_blockquote_p]:before:content-[''] [&_blockquote_p]:after:content-['']",
-].join(" ")
+// Up to 3 other posts, same category first.
+const all = (await getBlogPosts()).filter((p) => p.id !== entry.id)
+const more = [
+  ...all.filter((p) => p.data.category === category),
+  ...all.filter((p) => p.data.category !== category),
+].slice(0, 3)
 ---
 
 <BaseLayout
-  title={`${data.title} — ${t("site.name")}`}
-  description={data.description}
-  type="article"
-  jsonLd={jsonLd}
+  title={`${title} — بلاگ استودیو موتیوا`}
+  description={description}
+  ogImage={cover?.src}
+  article={{ pubDate, updatedDate, author, tags }}
 >
-  <article class="relative overflow-hidden">
-    {/* Soft brand glow behind the header. */}
-    <div
-      class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[440px] bg-brand-gradient-soft"
-      style="mask-image:linear-gradient(to bottom,black,transparent);-webkit-mask-image:linear-gradient(to bottom,black,transparent)"
-      aria-hidden="true"
-    >
-    </div>
-
-    <div class="container-x section max-w-3xl">
-      <a
-        href={tp("/blog")}
-        class="mb-8 inline-flex items-center gap-2 text-sm font-medium text-fg-muted transition hover:text-brand-pink"
-      >
-        <span aria-hidden="true">{lang === "fa" ? "→" : "←"}</span>
-        {t("blog.back")}
-      </a>
-
-      <header class="mb-10">
-        <div class="mb-5 flex flex-wrap items-center gap-3 text-sm">
-          <span class="inline-flex items-center gap-2 rounded-full bg-brand-gradient px-4 py-1.5 font-semibold text-white shadow-glow">
-            {data.category}
-          </span>
+  <article class="section">
+    <div class="container-x">
+      {/* Header */}
+      <header class="mx-auto max-w-3xl text-center">
+        <div class="flex flex-wrap items-center justify-center gap-3 text-sm text-fg-muted">
+          <a href="/blog" class="rounded-full bg-brand-gradient px-3.5 py-1 text-xs font-bold text-white transition hover:opacity-90">{category}</a>
+          <time datetime={pubDate.toISOString()}>{dateFmt.format(pubDate)}</time>
+          <span aria-hidden="true">·</span>
+          <span>{readingTime} دقیقه مطالعه</span>
         </div>
-
-        <h1 class="text-balance text-4xl font-extrabold leading-[1.15] tracking-tight md:text-5xl lg:text-[3.5rem]">
-          {data.title}
+        <h1 class="mt-5 text-3xl font-extrabold leading-snug tracking-tight sm:text-4xl lg:text-5xl lg:leading-[1.3]">
+          {title}
         </h1>
-
-        <p class="mt-5 text-lg leading-8 text-fg-muted md:text-xl">{data.description}</p>
-
-        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-border py-4 text-sm text-fg-muted">
-          <span class="inline-flex items-center gap-2.5">
-            <span class="grid h-9 w-9 place-items-center rounded-full bg-brand-gradient text-xs font-bold text-white">
-              {authorInitial}
-            </span>
-            <span class="font-semibold text-fg">{data.author}</span>
-          </span>
-
-          <span class="inline-flex items-center gap-1.5">
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"></path></svg>
-            <time datetime={data.pubDate.toISOString()}>{dateFmt.format(data.pubDate)}</time>
-          </span>
-
-          <span class="inline-flex items-center gap-1.5">
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-            {readingTime} {t("blog.readingTime")}
-          </span>
-
-          <span class="inline-flex items-center gap-1.5 ltr:ml-auto rtl:mr-auto">
-            <a href={shareX} target="_blank" rel="noopener noreferrer" aria-label="Share on X" class="grid h-9 w-9 place-items-center rounded-full border border-border transition hover:border-brand-pink hover:text-brand-pink">
-              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true"><path d="M18.9 2H22l-7.5 8.6L23 22h-6.9l-5.4-7-6.2 7H1.4l8-9.2L1 2h7l4.9 6.5L18.9 2Zm-2.4 18h1.9L7.6 4H5.6l10.9 16Z"></path></svg>
-            </a>
-            <a href={shareLinkedIn} target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn" class="grid h-9 w-9 place-items-center rounded-full border border-border transition hover:border-brand-pink hover:text-brand-pink">
-              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true"><path d="M6.94 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM3.3 8.5h3.28V21H3.3V8.5Zm5.5 0h3.14v1.7h.05c.44-.83 1.5-1.7 3.1-1.7 3.32 0 3.93 2.18 3.93 5V21h-3.28v-4.9c0-1.17-.02-2.67-1.63-2.67-1.63 0-1.88 1.27-1.88 2.58V21H8.8V8.5Z"></path></svg>
-            </a>
-            <a href={shareTelegram} target="_blank" rel="noopener noreferrer" aria-label="Share on Telegram" class="grid h-9 w-9 place-items-center rounded-full border border-border transition hover:border-brand-pink hover:text-brand-pink">
-              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.6 20c-.24 1.1-.9 1.37-1.82.85l-5-3.7-2.4 2.32c-.27.27-.5.5-1 .5l.35-5.02L17.9 6.1c.4-.35-.08-.55-.62-.2L6.2 12.7l-4.96-1.55c-1.08-.34-1.1-1.08.23-1.6l19.4-7.48c.9-.33 1.68.2 1.39 1.53Z"></path></svg>
-            </a>
-          </span>
-        </div>
+        <p class="mt-5 text-lg leading-9 text-fg-muted">{description}</p>
+        <p class="mt-4 text-sm text-fg-muted">نوشتهٔ {author}</p>
       </header>
 
+      {/* Cover */}
       {
-        data.cover && (
-          <figure class="mb-12">
+        cover && (
+          <figure class="reveal mx-auto mt-10 max-w-4xl overflow-hidden rounded-[2rem] border border-border shadow-soft">
             <Image
-              src={data.cover}
-              alt={data.coverAlt ?? data.title}
-              widths={[480, 800, 1200]}
-              sizes="(max-width: 768px) 100vw, 768px"
-              class="aspect-[16/9] w-full rounded-3xl object-cover shadow-soft ring-1 ring-border"
+              src={cover}
+              alt={coverAlt ?? title}
+              widths={[640, 960, 1280]}
+              sizes="(max-width: 960px) 100vw, 900px"
+              class="w-full object-cover"
               loading="eager"
             />
-            {data.coverAlt && (
-              <figcaption class="mt-3 text-center text-xs text-fg-muted">{data.coverAlt}</figcaption>
-            )}
           </figure>
         )
       }
 
-      <div class={prose}>
+      {/* Body */}
+      <div class="prose-motiva mx-auto mt-12 max-w-3xl">
         <slot />
       </div>
 
+      {/* Footer meta */}
+      <footer class="mx-auto mt-12 max-w-3xl border-t border-border pt-8">
+        {
+          tags.length > 0 && (
+            <div class="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span class="rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-fg-muted">#{tag}</span>
+              ))}
+            </div>
+          )
+        }
+        {
+          updatedDate && (
+            <p class="mt-4 text-sm text-fg-muted">آخرین به‌روزرسانی: {dateFmt.format(updatedDate)}</p>
+          )
+        }
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <span class="text-sm font-bold">به اشتراک بگذارید:</span>
+          <a
+            href={telegramShare}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="rounded-full border border-border px-4 py-2 text-sm text-fg-muted transition hover:border-brand-pink hover:text-fg"
+          >تلگرام</a>
+          <a
+            href={twitterShare}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="rounded-full border border-border px-4 py-2 text-sm text-fg-muted transition hover:border-brand-pink hover:text-fg"
+          >ایکس (توییتر)</a>
+          <button
+            type="button"
+            data-copy-link={postUrl}
+            class="rounded-full border border-border px-4 py-2 text-sm text-fg-muted transition hover:border-brand-pink hover:text-fg"
+          >کپی لینک</button>
+        </div>
+      </footer>
+
+      {/* More posts */}
       {
-        data.tags.length > 0 && (
-          <div class="mt-12 flex flex-wrap gap-2 border-t border-border pt-8">
-            {data.tags.map((tag) => (
-              <span class="rounded-full border border-border bg-bg-soft px-3 py-1 text-sm text-fg-muted transition hover:border-brand-pink hover:text-brand-pink">
-                #{tag}
-              </span>
-            ))}
-          </div>
+        more.length > 0 && (
+          <aside class="mx-auto mt-16 max-w-4xl">
+            <h2 class="text-xl font-extrabold">خواندنی‌های بیشتر</h2>
+            <div class="mt-6 grid gap-5 sm:grid-cols-3">
+              {more.map((p) => (
+                <a href={`/blog/${entrySlug(p.id)}`} class="card card-hover group flex flex-col !p-5">
+                  <span class="text-xs font-bold text-brand-pink">{p.data.category}</span>
+                  <span class="mt-2 flex-1 font-bold leading-relaxed transition group-hover:text-brand-pink">{p.data.title}</span>
+                  <span class="mt-3 text-xs text-fg-muted">{readingMinutes(p)} دقیقه مطالعه</span>
+                </a>
+              ))}
+            </div>
+          </aside>
         )
       }
-
-      <aside class="mt-10 flex flex-wrap items-center gap-4 rounded-3xl border border-border bg-surface p-6">
-        <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-brand-gradient text-lg font-bold text-white shadow-glow">
-          {authorInitial}
-        </span>
-        <div class="min-w-0">
-          <p class="font-bold">{data.author}</p>
-          <p class="mt-1 text-sm text-fg-muted">{t("footer.madeWith")}</p>
-        </div>
-        <a href={tp("/contact")} class="btn-primary ltr:ml-auto rtl:mr-auto">
-          {t("cta.button")}
-        </a>
-      </aside>
     </div>
   </article>
+
+  <CTA />
 </BaseLayout>
+
+<script>
+  // "Copy link" button — re-bound after every view transition.
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLButtonElement>("[data-copy-link]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(btn.dataset.copyLink ?? "")
+          const prev = btn.textContent
+          btn.textContent = "کپی شد ✓"
+          setTimeout(() => (btn.textContent = prev), 1800)
+        } catch {
+          /* clipboard unavailable — ignore */
+        }
+      })
+    })
+  })
+</script>

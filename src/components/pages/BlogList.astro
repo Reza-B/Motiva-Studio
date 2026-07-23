@@ -1,128 +1,171 @@
 ---
-/* Blog index body — category filter (static links) + post cards. */
-import { Image } from "astro:assets";
-import SectionHeader from "@components/SectionHeader.astro";
-import {
-	getLangFromUrl,
-	useTranslations,
-	useTranslatedPath,
-} from "@i18n/utils";
-import {
-	getBlogPosts,
-	readingMinutes,
-	splitEntryId,
-	collectCategories,
-} from "@lib/blog";
+/* =============================================================
+   Blog index — featured latest post + filterable masonry grid.
+   فیلتر دسته‌بندی حالا واقعاً کار می‌کند (قبلاً فقط متن بود):
+   دکمه‌ها + اسکریپت کوچک کلاینتی که کارت‌ها را بر اساس
+   data-category نشان/پنهان می‌کند.
+   ============================================================= */
+import { Image } from "astro:assets"
+import SectionHeader from "@components/SectionHeader.astro"
+import { getBlogPosts, readingMinutes, entrySlug, collectCategories } from "@lib/blog"
 
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
-const tp = useTranslatedPath(lang);
+const posts = await getBlogPosts()
+const [featured, ...rest] = posts
+const categories = collectCategories(posts)
 
-const posts = await getBlogPosts(lang);
-const categories = collectCategories(posts);
-const dateFmt = new Intl.DateTimeFormat(lang === "fa" ? "fa-IR" : "en-US", {
-	year: "numeric",
-	month: "short",
-	day: "numeric",
-});
+const dateFmt = new Intl.DateTimeFormat("fa-IR", { year: "numeric", month: "long", day: "numeric" })
 ---
 
 <section class="section">
-	<div class="container-x">
-		<SectionHeader
-			eyebrow={t("nav.blog")}
-			title={t("blog.title")}
-			subtitle={t("blog.subtitle")}
-		/>
+  <div class="container-x">
+    <SectionHeader
+      eyebrow="بلاگ موتیوا"
+      title="حرف‌هایی که به درد برندتان می‌خورد"
+      subtitle="تجربهٔ واقعی ما از ساخت ویدیوهایی که دیده شدند — بدون تعارف و بدون تئوری‌بازی."
+    />
 
-		{
-			categories.length > 0 && (
-				<div class="reveal mt-10 flex flex-wrap justify-center gap-2">
-					<span class="rounded-full bg-brand-gradient px-4 py-2 text-sm font-medium text-white">
-						{t("blog.all")}
-					</span>
-					{categories.map((c) => (
-						<span class="rounded-full border border-border px-4 py-2 text-sm text-fg-muted cursor-pointer transition hover:border-brand-pink hover:text-brand-pink">
-							{c}
-						</span>
-					))}
-				</div>
-			)
-		}
+    {/* Category filter — functional buttons */}
+    <div class="reveal mt-10 flex flex-wrap justify-center gap-2.5" role="group" aria-label="فیلتر دسته‌بندی مقاله‌ها">
+      <button
+        type="button"
+        data-blog-filter="all"
+        aria-pressed="true"
+        class="blog-chip rounded-full bg-brand-gradient px-5 py-2.5 text-sm font-bold text-white shadow-glow transition"
+      >
+        همه
+      </button>
+      {
+        categories.map((cat) => (
+          <button
+            type="button"
+            data-blog-filter={cat}
+            aria-pressed="false"
+            class="blog-chip rounded-full border border-border bg-surface px-5 py-2.5 text-sm font-medium text-fg-muted transition hover:border-brand-pink hover:text-fg"
+          >
+            {cat}
+          </button>
+        ))
+      }
+    </div>
 
-		<div class="masonry mt-12 columns-1 sm:columns-2 lg:columns-3">
-			{
-				posts.map((post, i) => {
-					const { slug } = splitEntryId(post.id);
-					return (
-						<article
-							class="masonry-item reveal card card-hover group mb-5 flex flex-col overflow-hidden"
-							data-reveal-delay={i * 0.06}
-						>
-							<a
-								href={tp(`/blog/${slug}`)}
-								class="block"
-							>
-								{post.data.cover ? (
-									<Image
-										src={post.data.cover}
-										alt={post.data.coverAlt ?? post.data.title}
-										widths={[400, 800]}
-										sizes="(max-width: 768px) 100vw, 400px"
-										class="aspect-video w-full object-cover transition duration-500 group-hover:scale-105"
-										loading="lazy"
-									/>
-								) : (
-									<div class="aspect-video w-full bg-brand-gradient-soft" />
-								)}
-							</a>
-							<div class="flex flex-1 flex-col p-6">
-								<div class="mb-3 flex items-center gap-3 text-xs text-fg-muted">
-									<span class="rounded-full bg-brand-gradient-soft px-3 py-1 font-medium text-brand-pink">
-										{post.data.category}
-									</span>
-									<time datetime={post.data.pubDate.toISOString()}>
-										{dateFmt.format(post.data.pubDate)}
-									</time>
-									<span aria-hidden="true">•</span>
-									<span>
-										{readingMinutes(post)} {t("blog.readingTime")}
-									</span>
-								</div>
-								<h2 class="text-xl font-bold leading-snug">
-									<a
-										href={tp(`/blog/${slug}`)}
-										class="transition group-hover:text-brand-pink"
-									>
-										{post.data.title}
-									</a>
-								</h2>
-								<p class="mt-2 flex-1 text-fg-muted">{post.data.description}</p>
-								<a
-									href={tp(`/blog/${slug}`)}
-									class="mt-4 inline-flex items-center gap-1 font-semibold text-brand-pink"
-								>
-									{t("blog.readmore")}
-									<span
-										aria-hidden="true"
-										class="rtl:rotate-180"
-									>
-										→
-									</span>
-								</a>
-							</div>
-						</article>
-					);
-				})
-			}
-		</div>
+    {/* Featured post */}
+    {
+      featured && (
+        <a
+          href={`/blog/${entrySlug(featured.id)}`}
+          data-blog-card
+          data-category={featured.data.category}
+          class="card card-hover reveal group mt-12 grid overflow-hidden !p-0 lg:grid-cols-2"
+        >
+          {featured.data.cover && (
+            <div class="overflow-hidden">
+              <Image
+                src={featured.data.cover}
+                alt={featured.data.coverAlt ?? featured.data.title}
+                widths={[480, 800, 1100]}
+                sizes="(max-width: 1024px) 100vw, 550px"
+                class="h-full max-h-[380px] w-full object-cover transition duration-500 group-hover:scale-105"
+                loading="eager"
+              />
+            </div>
+          )}
+          <div class="flex flex-col justify-center p-8 lg:p-10">
+            <div class="flex flex-wrap items-center gap-3 text-sm text-fg-muted">
+              <span class="rounded-full bg-brand-gradient px-3.5 py-1 text-xs font-bold text-white">{featured.data.category}</span>
+              <time datetime={featured.data.pubDate.toISOString()}>{dateFmt.format(featured.data.pubDate)}</time>
+              <span>·</span>
+              <span>{readingMinutes(featured)} دقیقه مطالعه</span>
+            </div>
+            <h2 class="mt-4 text-2xl font-extrabold leading-snug transition group-hover:text-brand-pink lg:text-3xl">
+              {featured.data.title}
+            </h2>
+            <p class="mt-3 leading-8 text-fg-muted">{featured.data.description}</p>
+            <span class="mt-6 inline-flex items-center gap-2 font-bold text-gradient">
+              خواندن مقاله
+              <svg viewBox="0 0 24 24" class="h-4 w-4 rotate-180 text-brand-pink" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </span>
+          </div>
+        </a>
+      )
+    }
 
-		{
-			posts.length === 0 && (
-				<p class="mt-12 text-center text-fg-muted">
-					{lang === "fa" ? "هنوز مطلبی منتشر نشده است." : "No posts yet."}
-				</p>
-			)
-		}
-	</div>
+    {/* Grid */}
+    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-blog-grid>
+      {
+        rest.map((post, i) => (
+          <a
+            href={`/blog/${entrySlug(post.id)}`}
+            data-blog-card
+            data-category={post.data.category}
+            class="card card-hover reveal group flex flex-col overflow-hidden !p-0"
+            data-reveal-delay={i * 70}
+          >
+            {post.data.cover && (
+              <div class="overflow-hidden">
+                <Image
+                  src={post.data.cover}
+                  alt={post.data.coverAlt ?? post.data.title}
+                  widths={[400, 640]}
+                  sizes="(max-width: 640px) 100vw, 420px"
+                  class="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            <div class="flex flex-1 flex-col p-6">
+              <div class="flex flex-wrap items-center gap-2.5 text-xs text-fg-muted">
+                <span class="rounded-full border border-border bg-bg-soft px-3 py-1 font-bold">{post.data.category}</span>
+                <time datetime={post.data.pubDate.toISOString()}>{dateFmt.format(post.data.pubDate)}</time>
+                <span>·</span>
+                <span>{readingMinutes(post)} دقیقه</span>
+              </div>
+              <h2 class="mt-3 text-lg font-bold leading-relaxed transition group-hover:text-brand-pink">
+                {post.data.title}
+              </h2>
+              <p class="mt-2 flex-1 text-sm leading-7 text-fg-muted">{post.data.description}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+
+    <p data-blog-empty hidden class="mt-12 text-center text-fg-muted">
+      در این دسته هنوز مقاله‌ای ننوشته‌ایم.
+    </p>
+  </div>
 </section>
+
+<script>
+  // Blog category filter — runs on first load and after view transitions.
+  function initBlogFilter() {
+    const chips = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-blog-filter]"))
+    if (chips.length === 0) return
+    const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-blog-card]"))
+    const empty = document.querySelector<HTMLElement>("[data-blog-empty]")
+
+    const activeCls = ["bg-brand-gradient", "text-white", "font-bold", "shadow-glow"]
+    const idleCls = ["border", "border-border", "bg-surface", "text-fg-muted", "font-medium", "hover:border-brand-pink", "hover:text-fg"]
+
+    function apply(filter: string) {
+      let shown = 0
+      for (const card of cards) {
+        const show = filter === "all" || card.dataset.category === filter
+        card.classList.toggle("hidden", !show)
+        if (show) shown++
+      }
+      if (empty) empty.hidden = shown > 0
+      for (const chip of chips) {
+        const isActive = chip.dataset.blogFilter === filter
+        chip.setAttribute("aria-pressed", String(isActive))
+        chip.classList.remove(...activeCls, ...idleCls)
+        chip.classList.add(...(isActive ? activeCls : idleCls))
+      }
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => apply(chip.dataset.blogFilter ?? "all"))
+    })
+  }
+
+  document.addEventListener("astro:page-load", initBlogFilter)
+</script>

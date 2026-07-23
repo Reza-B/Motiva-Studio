@@ -1,100 +1,71 @@
 ---
 /* =============================================================
-   Header — sticky, glassy, shrinks on scroll (see animations.ts:
-   initHeaderShrink toggles [data-scrolled]).
-   Contains desktop nav + theme toggle + language switcher, and
-   a React MobileMenu island for small screens.
+   Header — fixed glass bar that condenses after scrolling.
+   The `group` class + [data-scrolled] drive the condensed style
+   (see initHeader in lib/animations.ts).
    ============================================================= */
-import ThemeToggle from "./ThemeToggle.astro"
-import LanguageSwitcher from "./LanguageSwitcher.astro"
-import MobileMenu from "./MobileMenu.tsx"
-import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
-
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
-const tp = useTranslatedPath(lang)
+import MobileMenu from "@components/MobileMenu.tsx"
 
 const nav = [
-  { href: tp("/services"), label: t("nav.services") },
-  { href: tp("/portfolio"), label: t("nav.portfolio") },
-  { href: tp("/about"), label: t("nav.about") },
-  { href: tp("/blog"), label: t("nav.blog") },
-  { href: tp("/contact"), label: t("nav.contact") },
+  { href: "/", label: "خانه" },
+  { href: "/services", label: "خدمات" },
+  { href: "/portfolio", label: "نمونه‌کارها" },
+  { href: "/blog", label: "بلاگ" },
+  { href: "/about", label: "درباره ما" },
 ]
-const current = Astro.url.pathname
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/"
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path.startsWith(href)
 ---
 
 <header
   data-header
-  class="fixed inset-x-0 top-0 z-50 transition-all duration-300 data-[scrolled]:backdrop-blur-xl"
+  class="group fixed inset-x-0 top-0 z-50 transition-all duration-300
+    data-[scrolled]:bg-bg/80 data-[scrolled]:shadow-soft data-[scrolled]:backdrop-blur-xl"
 >
   <div
-    class="container-x rounded-xl flex items-center justify-between gap-4 py-5 transition-all duration-300 group-data-[scrolled]:py-3"
+    class="container-x flex items-center justify-between py-5 transition-all duration-300 group-data-[scrolled]:py-3"
   >
     {/* Logo */}
-    <a
-      href={tp("/")}
-      class="flex items-center gap-2.5 font-extrabold"
-      aria-label={t("site.name")}
-    >
-      <img
-        src="/logo.png"
-        alt={t("site.name")}
-        class="h-9 w-9 rounded-xl object-cover"
-      />
-      <span class="text-lg tracking-tight">{t("site.name")}</span>
+    <a href="/" class="flex items-center gap-3" aria-label="استودیو موتیوا — صفحهٔ اصلی">
+      <img src="/logo.png" alt="لوگوی استودیو موتیوا" class="h-10 w-10 rounded-xl object-contain" width="40" height="40" />
+      <span class="text-lg font-extrabold tracking-tight">استودیو موتیوا</span>
     </a>
 
     {/* Desktop nav */}
-    <nav
-      class="hidden items-center gap-1 lg:flex"
-      aria-label={lang === "fa" ? "ناوبری اصلی" : "Primary"}
-    >
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="منوی اصلی">
       {
-        nav.map((item) => {
-          const active =
-            current === item.href || current === item.href + "/"
-          return (
-            <a
-              href={item.href}
-              aria-current={active ? "page" : undefined}
-              class:list={[
-                "rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                active
-                  ? "text-brand-pink"
-                  : "text-fg-muted hover:text-fg",
-              ]}
-            >
-              {item.label}
-            </a>
-          )
-        })
+        nav.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isActive(item.href) ? "page" : undefined}
+            class:list={[
+              "relative rounded-full px-4 py-2 text-sm font-medium transition-colors",
+              isActive(item.href)
+                ? "text-fg"
+                : "text-fg-muted hover:text-fg",
+            ]}
+          >
+            {item.label}
+            {isActive(item.href) && (
+              <span class="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-brand-gradient" aria-hidden="true" />
+            )}
+          </a>
+        ))
       }
     </nav>
 
-    <div class="flex items-center gap-2">
-      <LanguageSwitcher />
-      <ThemeToggle />
-      <a href={tp("/contact")} class="btn-primary hidden !px-5 !py-2.5 text-sm md:inline-flex">
-        {t("nav.cta")}
+    <div class="flex items-center gap-3">
+      <a href="/contact" class="btn-primary hidden !px-6 !py-2.5 text-sm lg:inline-flex">
+        شروع پروژه
       </a>
-      {/* Mobile menu (React island — hydrated only on small screens interaction) */}
-      <MobileMenu
-        client:load
-        lang={lang}
-        items={[{ href: tp("/"), label: t("nav.home") }, ...nav]}
-        labels={{ open: t("menu.open"), close: t("menu.close"), cta: t("nav.cta"), ctaHref: tp("/contact") }}
-      />
+      <div class="lg:hidden">
+        <MobileMenu client:load links={[...nav, { href: "/contact", label: "تماس با ما" }]} />
+      </div>
     </div>
   </div>
 </header>
 
-{/* Spacer so content isn't hidden behind the fixed header. */}
+{/* Spacer so content doesn't hide behind the fixed header. */}
 <div class="h-20" aria-hidden="true"></div>
-
-<style>
-  header[data-scrolled] > div {
-    background: rgb(var(--bg) / 0.7);
-    border-bottom: 1px solid rgb(var(--border) / 0.6);
-  }
-</style>

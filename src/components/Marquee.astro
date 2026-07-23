@@ -1,23 +1,22 @@
 ---
 /* =============================================================
-   Marquee — infinite horizontal scroll of client logos (text).
-   Direction respects locale (RTL vs LTR). Pauses on hover.
-   The row is duplicated so the loop is seamless.
+   Industries marquee — an honest "who we shoot for" strip
+   (به‌جای لوگوی مشتریان فرضی). CSS-only infinite loop.
    ============================================================= */
-import { getLangFromUrl } from "@i18n/utils"
-import { clients } from "@data/site"
+import { industries } from "@data/site"
 
-const lang = getLangFromUrl(Astro.url)
-const anim = lang === "fa" ? "animate-marquee-rtl" : "animate-marquee"
+// Duplicate the list so translateX(50%) loops seamlessly.
+const loop = [...industries, ...industries]
 ---
 
-<section class="section-sm border-y border-border bg-bg-soft py-10" aria-label="Clients">
-  <div class="mask-x overflow-hidden">
-    <div class:list={["flex w-max gap-16 hover:[animation-play-state:paused]", anim]}>
+<section class="section-sm border-y border-border bg-bg-soft/60" aria-label="حوزه‌هایی که برایشان ویدیو می‌سازیم">
+  <div class="mask-x overflow-hidden" dir="ltr">
+    <div class="flex w-max animate-marquee items-center gap-4 pe-4 hover:[animation-play-state:paused]" dir="rtl">
       {
-        [...clients, ...clients].map((c) => (
-          <span class="text-2xl font-bold tracking-tight text-fg-muted/60 transition hover:text-brand-pink">
-            {c}
+        loop.map((name) => (
+          <span class="inline-flex shrink-0 items-center gap-3 rounded-full border border-border bg-surface px-6 py-2.5 text-sm font-medium text-fg-muted">
+            <span class="h-1.5 w-1.5 rounded-full bg-brand-gradient" aria-hidden="true" />
+            {name}
           </span>
         ))
       }

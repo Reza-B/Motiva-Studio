@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro"
 import ContactContent from "@components/pages/ContactContent.astro"
-import { getLangFromUrl, useTranslations } from "@i18n/utils"
-const t = useTranslations(getLangFromUrl(Astro.url))
 ---
 
-<BaseLayout title={t("seo.contact.title")} description={t("seo.contact.desc")} keywords={t("seo.contact.keywords")}>
+<BaseLayout
+  title="تماس با ما — استودیو موتیوا"
+  description="برای شروع پروژهٔ ویدیوی تبلیغاتی با استودیو موتیوا در تماس باشید؛ مشاورهٔ اول رایگان است و حداکثر یک روز کاری بعد پاسخ می‌دهیم."
+  keywords="تماس استودیو موتیوا, سفارش تیزر تبلیغاتی, سفارش موشن گرافیک, مشاوره ویدیو مارکتینگ"
+>
   <ContactContent />
 </BaseLayout>

@@ -1,32 +1,23 @@
 ---
-/* =============================================================
-   HomeSections — the full homepage body, locale-agnostic.
-   Reused by both / (fa) and /en. All child components read the
-   active locale from the URL, so nothing needs to be passed in.
-   ============================================================= */
+/* Home page body — section order tells the sales story:
+   hook (hero) → trust (industries/stats) → offer (services)
+   → proof (portfolio/testimonials) → how (process) → close (CTA). */
 import Hero from "@components/Hero.astro"
 import Marquee from "@components/Marquee.astro"
 import ServicesOverview from "@components/ServicesOverview.astro"
 import WhyMotiva from "@components/WhyMotiva.astro"
-import ProcessTimeline from "@components/ProcessTimeline.astro"
-import Pricing from "@components/Pricing.astro"
 import StatsCounter from "@components/StatsCounter.astro"
-import CTA from "@components/CTA.astro"
+import ProcessTimeline from "@components/ProcessTimeline.astro"
 import SectionHeader from "@components/SectionHeader.astro"
-import Testimonials from "@components/Testimonials.tsx"
 import PortfolioGallery from "@components/PortfolioGallery.tsx"
-import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils"
+import Testimonials from "@components/Testimonials.tsx"
+import CTA from "@components/CTA.astro"
+import { getPortfolioItems, entrySlug } from "@lib/blog"
 import { testimonials } from "@data/content"
-import { getPortfolioItems, splitEntryId } from "@lib/blog"
 
-const lang = getLangFromUrl(Astro.url)
-const t = useTranslations(lang)
-const tp = useTranslatedPath(lang)
-
-// Featured portfolio (first 6) for the home grid.
-const entries = (await getPortfolioItems(lang)).slice(0, 6)
+const entries = (await getPortfolioItems()).slice(0, 6)
 const items = entries.map((e) => ({
-  slug: splitEntryId(e.id).slug,
+  slug: entrySlug(e.id),
   title: e.data.title,
   client: e.data.client,
   category: e.data.category,
@@ -37,62 +28,50 @@ const items = entries.map((e) => ({
 }))
 
 const filters = [
-  { id: "all", label: t("portfolio.all") },
-  { id: "social", label: lang === "fa" ? "شبکه اجتماعی" : "Social" },
-  { id: "teaser", label: lang === "fa" ? "تیزر" : "Teaser" },
-  { id: "motion", label: lang === "fa" ? "موشن" : "Motion" },
-  { id: "brand", label: lang === "fa" ? "برند" : "Brand" },
+  { id: "all", label: "همه" },
+  { id: "social", label: "شبکهٔ اجتماعی" },
+  { id: "teaser", label: "تیزر" },
+  { id: "motion", label: "موشن" },
+  { id: "brand", label: "فیلم برند" },
 ]
-
-const tItems = testimonials.map((x) => ({
-  name: x.name[lang],
-  role: x.role[lang],
-  quote: x.quote[lang],
-}))
 ---
 
 <Hero />
 <Marquee />
-<ServicesOverview compact />
-<WhyMotiva />
+<ServicesOverview />
+<StatsCounter />
 
-{/* Featured portfolio */}
-<section class="section" id="work">
-  <div class="container-x">
-    <SectionHeader
-      eyebrow={t("nav.portfolio")}
-      title={t("portfolio.title")}
-      subtitle={t("portfolio.subtitle")}
-    />
-    <div class="mt-14">
-      <PortfolioGallery
-        client:visible
-        items={items}
-        filters={filters}
-        lang={lang}
-        viewLabel={t("portfolio.view")}
-      />
-    </div>
-    <div class="reveal mt-10 text-center">
-      <a href={tp("/portfolio")} class="btn-ghost">{t("portfolio.more")}</a>
-    </div>
-  </div>
-</section>
-
-<ProcessTimeline />
-<Pricing />
-
-{/* Testimonials */}
+{/* Featured work */}
 <section class="section">
   <div class="container-x">
     <SectionHeader
-      eyebrow={t("testimonials.title")}
-      title={t("testimonials.title")}
-      subtitle={t("testimonials.subtitle")}
+      eyebrow="نمونه‌کارها"
+      title="ببینید چه ساخته‌ایم"
+      subtitle="به‌جای تعریف، خودِ کارها را تماشا کنید؛ هر کدام برای یک هدف مشخص ساخته شده‌اند."
     />
-    <Testimonials client:visible items={tItems} lang={lang} />
+    <div class="reveal mt-12" data-reveal-delay="100">
+      <PortfolioGallery client:visible items={items} filters={filters} />
+    </div>
+    <div class="reveal mt-10 text-center">
+      <a href="/portfolio" class="btn-ghost">همهٔ نمونه‌کارها</a>
+    </div>
   </div>
 </section>
 
-<StatsCounter />
+<WhyMotiva />
+<ProcessTimeline />
+
+{/* Social proof */}
+<section class="section bg-bg-soft/50">
+  <div class="container-x">
+    <SectionHeader
+      eyebrow="نظر مشتری‌ها"
+      title="از زبان کسانی که با ما کار کرده‌اند"
+    />
+    <div class="reveal mt-12" data-reveal-delay="100">
+      <Testimonials client:visible items={testimonials} />
+    </div>
+  </div>
+</section>
+
 <CTA />

@@ -1,22 +1,20 @@
-/* Persian RSS feed at /rss.xml */
 import rss from "@astrojs/rss"
 import type { APIContext } from "astro"
-import { getBlogPosts, splitEntryId } from "@lib/blog"
-import { ui } from "@i18n/ui"
+import { getBlogPosts, entrySlug } from "@lib/blog"
 
 export async function GET(context: APIContext) {
-  const posts = await getBlogPosts("fa")
+  const posts = await getBlogPosts()
   return rss({
-    title: ui.fa["site.name"] + " — " + ui.fa["blog.title"],
-    description: ui.fa["blog.subtitle"],
-    site: context.site ?? "https://motiva.studio",
+    title: "بلاگ استودیو موتیوا",
+    description:
+      "مقاله‌های کاربردی دربارهٔ ویدیو مارکتینگ، ریلز و موشن گرافیک از تیم موتیوا.",
+    site: context.site!,
     items: posts.map((post) => ({
       title: post.data.title,
       description: post.data.description,
       pubDate: post.data.pubDate,
-      categories: [post.data.category, ...post.data.tags],
-      link: `/blog/${splitEntryId(post.id).slug}/`,
+      link: `/blog/${entrySlug(post.id)}/`,
     })),
-    customData: `<language>fa-IR</language>`,
+    customData: "<language>fa</language>",
   })
 }
